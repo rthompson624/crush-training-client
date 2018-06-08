@@ -24,8 +24,8 @@
   <p-dialog header="Cancel Subscription" [(visible)]="displayDeleteConfirmation" (onHide)="displayDeleteConfirmation = false" [modal]="true" [responsive]="true">
     Are you sure you wish to cancel your subscription?
     <p-footer>
-      <button type="button" pButton icon="fa-check" (click)="cancelSubscription()" label="Yes"></button>
-      <button type="button" pButton icon="fa-close" (click)="displayDeleteConfirmation = false" label="No"></button>
+      <button type="button" pButton icon="fa fa-check" (click)="cancelSubscription()" label="Yes"></button>
+      <button type="button" pButton icon="fa fa-close" (click)="displayDeleteConfirmation = false" label="No"></button>
     </p-footer>
   </p-dialog>
   <p-dialog header="Subscription Cancelled" [(visible)]="displayGoodbye" (onHide)="displayGoodbye = false" [modal]="true" [responsive]="true">

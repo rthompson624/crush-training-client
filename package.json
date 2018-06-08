@@ -27,7 +27,8 @@
     "core-js": "^2.5.7",
     "firebase": "^4.13.1",
     "font-awesome": "^4.7.0",
-    "primeng": "^5.2.7",
+    "primeicons": "^1.0.0-beta.6",
+    "primeng": "^6.0.0-beta.1",
     "rxjs": "^5.5.11",
     "zone.js": "^0.8.26"
   },

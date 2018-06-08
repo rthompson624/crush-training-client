@@ -1,0 +1,34 @@
+<div class="ui-g" style="margin-top:3.5em;margin-bottom:2em;">
+  <app-check-version></app-check-version>
+  <div class="ui-g-12">
+    <h4 style="margin:0em">Change Subscription</h4>
+  </div>
+  <div class="ui-g-12">
+    <h5 style="margin:0em">Current monthly plan:</h5>
+  </div>
+  <div *ngFor="let plan of plans" class="ui-g-12">
+    <p-radioButton name="group1" (onClick)="disableCheckoutButton = false" value="{{ plan[0] }}" label="{{ plan[0] }} (up to {{ plan[1] }} clients) ${{ plan[2] / 100 }}" [(ngModel)]="selectedPlan"></p-radioButton>
+  </div>
+  <div class="ui-g-12">
+    <p-button (onClick)="changeSubscription()" label="Apply Change" [disabled]="disableCheckoutButton"></p-button>
+  </div>
+  <div class="ui-g-12">
+    <hr>
+  </div>
+  <div class="ui-g-12">
+    To cancel your subscription click <a (click)="displayDeleteConfirmation = true">here</a>.
+  </div>
+  <p-dialog header="Subscription Updated" [(visible)]="displayUpdateConfirmation" (onHide)="displayUpdateConfirmation = false" [modal]="true" [responsive]="true">
+    Your subscription has been changed to the {{ selectedPlan }} plan. A prorated adjustment will be made to your account for the current month.
+  </p-dialog>
+  <p-dialog header="Cancel Subscription" [(visible)]="displayDeleteConfirmation" (onHide)="displayDeleteConfirmation = false" [modal]="true" [responsive]="true">
+    Are you sure you wish to cancel your subscription?
+    <p-footer>
+      <button type="button" pButton icon="fa-check" (click)="cancelSubscription()" label="Yes"></button>
+      <button type="button" pButton icon="fa-close" (click)="displayDeleteConfirmation = false" label="No"></button>
+    </p-footer>
+  </p-dialog>
+  <p-dialog header="Subscription Cancelled" [(visible)]="displayGoodbye" (onHide)="displayGoodbye = false" [modal]="true" [responsive]="true">
+    Your subscription has been cancelled. You still have full use of the app until {{ formatDate(user.planExpiration) }}.
+  </p-dialog>
+</div>

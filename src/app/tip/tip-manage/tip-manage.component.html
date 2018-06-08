@@ -1,0 +1,73 @@
+<!-- Tip Page -->
+<div class="ui-g-12" style="margin-top:3em;margin-bottom:2em">
+  <app-check-version></app-check-version>
+  <div class="ui-g-12 ui-g-nopad">
+    <div class="ui-g" style="float:left">
+      <h4 style="margin:0em;padding-top:0.25em;padding-bottom:0.25em">Tip Library</h4>
+    </div>
+    <div class="ui-g" style="float:left;padding-left:0.5em">
+      <a (click)="info1.visible = true;" style="color:#337AB7;"><i class="fa fa-info-circle"></i></a>
+    </div>
+  </div>
+  <p-dialog #info1 header="Info" [visible]="false" (onHide)="info1.visible = false;" modal="modal" [responsive]="true">
+    <div class="ui-g-12 ui-g-nopad">
+      Tips display daily on your clients' home screen. It's a great way to provide interesting content your clients will look forward to reading each day. The <b>Re-seed</b> link at the bottom of the page will recycle the tips to be used again.
+    </div>
+  </p-dialog>
+  <p-dialog #info2 header="Info" [visible]="false" (onHide)="info2.visible = false;" modal="modal" [responsive]="true">
+    <div class="ui-g-12 ui-g-nopad">
+      You can include links in your tip. Make sure to include the HTML attribute target="_blank" like in the example below so that the client's browser will open a new window to view the link.
+    </div>
+    <div class="ui-g-12 ui-g-nopad" style="padding-top:1em">Example:</div>
+    <div class="ui-g-12 ui-g-nopad" style="padding-top:1em">
+      Green tea contains the compound EGCG which is &lt;a href="https://www.ncbi.nlm.nih.gov/pubmed/17906191" <mark>target="_blank"</mark>&gt;proven&lt;/a&gt; to increase fat metabolism.
+    </div>
+  </p-dialog>
+  <!-- Detail Section -->
+  <div class="ui-g-12 ui-g-nopad">
+    <div class="ui-g-12 ui-g-nopad app-control-label">Date</div>
+    <div class="ui-g-12 ui-g-nopad">
+      <p-calendar [(ngModel)]="activeTip.startDate" (onSelect)="validateForm()" (onBlur)="validateForm()"></p-calendar>
+    </div>
+    <div class="ui-g-12 ui-g-nopad app-control-label">
+      Tip &nbsp;<a (click)="info2.visible = true;" style="color:#337AB7;"><i class="fa fa-info-circle"></i></a>
+    </div>
+    <div class="ui-g-12 ui-g-nopad">
+      <textarea pInputTextarea rows="4" style="width:95%" [(ngModel)]="activeTip.tipText" (keyup)="validateForm()"></textarea>
+    </div>
+    <div class="ui-g-12 ui-g-nopad app-control-label">
+      <p-button label="Save" (onClick)="saveTip()" [disabled]="saveDisabled"></p-button>
+    </div>
+  </div>
+  <div class="ui-g-12 ui-g-nopad" style="width:95%"><hr style="margin-top:1em;margin-bottom:0"></div>
+  <!-- List Section -->
+  <div class="ui-g-12 ui-g-nopad">
+    <div class="ui-g-12 ui-g-nopad app-control-label">Repository</div>
+    <div class="ui-g-12 ui-g-nopad">
+      <p-scrollPanel [style]="{width: '95%', height: '18em'}">
+        <div *ngFor="let tip of tips" class="ui-g-12 ui-g-nopad" style="padding-right:1.5em;">
+          <div class="ui-g-3 ui-g-nopad">
+            <div class="ui-g-12 ui-md-6 ui-g-nopad">
+              {{ formatDate(tip.startDate) }}
+            </div>
+            <div class="ui-g-12 ui-md-6 ui-g-nopad">
+              <div class="ui-g" style="float:left;padding-left:0.3em;">
+                <a (click)="onEditTip(tip)" style="color:#337AB7;"><i class="fa fa-pencil"></i></a>
+              </div>
+              <div class="ui-g" style="margin-left: 3.5em;">
+                <a (click)="onDeleteTip(tip)" style="color:#337AB7;"><i class="fa fa-trash-o"></i></a>
+              </div>
+            </div>
+          </div>
+          <div class="ui-g-9 ui-g-nopad">
+            {{ tip.tipText }}
+          </div>
+        </div>
+        <div class="ui-g-12 ui-g-nopad"><br><br></div>
+      </p-scrollPanel>
+    </div>
+    <div class="ui-g-12 ui-g-nopad" style="margin-top: 1em;">
+      <a (click)="reseedTips()" style="color:#337AB7;"><i class="fa fa-calendar fa-lg"></i> &nbsp; Re-seed all tips starting today</a>
+    </div>
+  </div>
+</div>

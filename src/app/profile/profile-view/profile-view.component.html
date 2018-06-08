@@ -1,0 +1,139 @@
+<!-- Profile View Page -->
+<div class="ui-g-12 ui-g-nopad" style="margin-top:4em;margin-bottom:1.5em">
+  <app-check-version></app-check-version>
+  <ng-container *ngIf="subjectUser">
+    <div class="ui-g-12">
+      <div class="ui-g-5">
+        <img *ngIf="subjectUser.hasProfilePic && (profilePicUrl | async)" [src]="profilePicUrl | async" style="max-width:100%">
+        <ng-container *ngIf="!subjectUser.hasProfilePic">
+          <img *ngIf="subjectUser.gender == 'male'" style="max-width:100%" src="/assets/images/no-profile-pic-male.jpg">
+          <img *ngIf="subjectUser.gender == 'female'" style="max-width:100%" src="/assets/images/no-profile-pic-female.jpg">
+          <img *ngIf="!subjectUser.gender" style="max-width:100%" src="/assets/images/no-profile-pic-male.jpg">
+        </ng-container>
+      </div>
+      <div class="ui-g-7">
+        <div class="ui-g-12 ui-g-nopad" style="padding-bottom:0.5em"><h4 style="margin:0em;">{{ subjectUser.nameFirst }} {{ subjectUser.nameLast }}</h4></div>
+        <div class="ui-g-12 ui-g-nopad">{{ subjectUser.phone }}</div>
+        <div class="ui-g-12 ui-g-nopad">{{ subjectUser.email }}</div>
+        <div *ngIf="subjectUser.country == 'United States'" class="ui-g-12 ui-g-nopad">{{ subjectUser.city }}, {{ subjectUser.state }}, {{ subjectUser.country }}</div>
+        <div *ngIf="subjectUser.country != 'United States'" class="ui-g-12 ui-g-nopad">{{ subjectUser.city }}, {{ subjectUser.country }}</div>
+        <div class="ui-g-12 ui-g-nopad" style="padding-top:0.5em">{{ subjectUser.gender }}, {{ getAge(subjectUser.birthday) }}, {{ getFeetAndInches(subjectUser.height) }}, {{ subjectUser.weight }} lbs</div>
+      </div>
+    </div>
+    <div class="ui-g-12" *ngIf="!subjectUser.hasProfilePic && hasCompletedIntake">
+      <div *ngIf="!displayProgress" class="ui-g-12 ui-g-nopad">
+        <span class="app-chip-notify">1</span> &nbsp;<a (click)="fileInput.click()">Upload pic</a>
+      </div>
+      <div *ngIf="displayProgress" class="ui-g-12 ui-g-nopad" style="color:red;font-size:1.1em;font-weight:500">
+        {{ uploadStatus(uploadProgress | async) }}
+      </div>
+      <div class="ui-g-12 ui-g-nopad">
+        <input #fileInput style="display:none" type="file" (change)="uploadFile($event)" accept=".jpg">
+      </div>
+    </div>
+    <div *ngIf="trainerView" class="ui-g-12">
+      <p-toggleButton [(ngModel)]="isActive" (onChange)="onChangeStatus()" onLabel="Active" offLabel="Inactive" onIcon="fa-check-square" offIcon="fa-square" [style]="{'width':'8em'}"></p-toggleButton>
+    </div>
+    <div *ngIf="trainerView" class="ui-g-12">
+      <p-accordion>
+        <p-accordionTab>
+          <p-header style="font-size:1.1em;font-weight:500">Schedule</p-header>
+          <div *ngFor="let day of schedule" class="ui-g-12 ui-g-nopad" style="padding-bottom:0.8em;">
+            <div class="ui-g-1 ui-g-nopad" style="margin-top:0.2em">{{ DAYS_OF_WEEK[day.dayOfWeek] }}</div>
+            <div class="ui-g-4 ui-g-nopad" style="padding-left:0.5em">
+              <p-dropdown [options]="scheduleOptions" [(ngModel)]="day.meetingType" (onChange)="onScheduleOptionChange(day)"></p-dropdown>
+            </div>
+            <div class="ui-g-7 ui-g-nopad" style="padding-left:0.5em">
+              <div class="ui-g" style="float:left;padding-left:0.6em">
+                <p-dropdown [autoWidth]="false" *ngIf="day.meetingType == 'inperson'" [options]="hourOptions" [(ngModel)]="day.hour"></p-dropdown>
+              </div>
+              <div class="ui-g" style="float:left;padding-left:0.5em;">
+                <p-dropdown [autoWidth]="false" *ngIf="day.meetingType == 'inperson'" [options]="minuteOptions" [(ngModel)]="day.minute"></p-dropdown>
+              </div>
+            </div>
+          </div>
+          <div class="ui-g-12" style="padding-left:0em">
+            <p-button label="Save Schedule" (click)="onSaveScheduleClick()"></p-button>
+          </div>
+        </p-accordionTab>
+      </p-accordion>
+    </div>
+    <div *ngIf="trainerView" class="ui-g-12 ui-g-nopad" style="padding-top:0.5em">
+      <p-dialog #bodyCompInfo header="Body Composition Measurement" [visible]="false" (onHide)="bodyCompInfo.visible = false;" modal="modal" [responsive]="true">
+        <div class="ui-g-12 ui-g-nopad">
+          The client will receive a reminder to perform a set of body composition measurements on the specified day of the week. The 
+          measurements are tracked in graphs on the Progress screen viewable by both trainer and client. Collectively, these 
+          measurements provide a good picture of what is happening with the client's body composition. 
+          This is very useful in situations where the client's weight might not be changing, but their body composition is. 
+          The client takes the following four measurements each time. The descriptions given below are also provided to the client 
+          on the measurement entry screen via tool tips.
+        </div>
+        <div class="ui-g-12 ui-g-nopad app-control-label">
+          1) Weight
+        </div>
+        <div class="ui-g-12 ui-g-nopad">
+          Choose a time of day that is consistent from week to week to weigh yourself. First thing in the morning is ideal as body 
+          water levels should be similar. Also, make sure you're wearing a similar amount of clothing each time.
+        </div>
+        <div class="ui-g-12 ui-g-nopad app-control-label">
+          2) Body Fat
+        </div>
+        <div class="ui-g-12 ui-g-nopad">
+          Order the <a href="http://a.co/iRpnA64" target="_blank">AccuMeasure Body Fat Tester</a> from Amazon. Follow the 
+          directions to take a suprailliac skinfold measurement and convert it into a body fat percent reading. Although 
+          this is not the most accurate method for measuring body fat, it is sufficient for measuring the trend, 
+          which is what we are after.
+        </div>
+        <div class="ui-g-12 ui-g-nopad app-control-label">
+          3) Waist
+        </div>
+        <div class="ui-g-12 ui-g-nopad">
+          Order a <a href="http://a.co/3myADfR" target="_blank">soft measuring tape</a> from Amazon. Measure at the level of your navel.
+        </div>
+        <div class="ui-g-12 ui-g-nopad app-control-label">
+          4) Photo
+        </div>
+        <div class="ui-g-12 ui-g-nopad">
+          Take a photo that shows your entire body. A full-length mirror can be useful for this. Wear clothing that is revealing. The purpose 
+          of these photos is to see visual progress, which is a very useful tool. Maintain consistent posture and framing from week to week.
+        </div>
+      </p-dialog>
+      <div class="ui-g" style="float:left;padding-left:0.5em;margin-top:0.2em;font-size:1.1em;font-weight:500">Body Composition</div>
+      <div class="ui-g" style="float:left;padding-left:0.5em">
+        <a (click)="bodyCompInfo.visible = true;" style="color:#337AB7;"><i class="fa fa-info-circle"></i></a>
+      </div>
+      <div class="ui-g" style="float:left;padding-left:0.8em;margin-top:0.2em">
+        <p-inputSwitch [(ngModel)]="subjectUser.bodyCompImplemented" (onChange)="onBodyCompChange()"></p-inputSwitch>
+      </div>
+      <div *ngIf="subjectUser.bodyCompImplemented" class="ui-g" style="float:left;padding-left:0.8em">
+        <p-dropdown [options]="dayOptions" [(ngModel)]="subjectUser.bodyCompMeasurementDayOfWeek" (onChange)="onBodyCompChange()"></p-dropdown>
+      </div>
+    </div>
+    <div class="ui-g-12" style="padding-top:1em"><hr style="margin:0em;"></div>
+    <div class="ui-g-12 app-control-label">My Goal</div>
+    <div class="ui-g-12" [innerHTML]="formatMultiline(subjectUser.outcome)"></div>
+    <div class="ui-g-12 app-control-label">My Why</div>
+    <div class="ui-g-12" [innerHTML]="formatMultiline(subjectUser.outcomeReason)"></div>
+    <div class="ui-g-12"><hr style="margin:0em;"></div>
+    <ng-container *ngIf="!trainerView">
+      <div *ngIf="hasCompletedIntake" class="ui-g-12">
+        <a routerLink="edit"><i class="fa fa-pencil"></i> Edit Profile</a>
+      </div>
+      <div *ngIf="!hasCompletedIntake" class="ui-g-12">
+        <span class="app-chip-notify">1</span> &nbsp;Please complete your <a routerLink="/intake">Intake Questionnaire</a>.
+      </div>
+    </ng-container>
+    <ng-container *ngIf="trainerView">
+      <ng-container *ngIf="hasCompletedIntake">
+        <div class="ui-g-12 app-control-label">Notes from Intake</div>
+        <div class="ui-g-12" [innerHTML]="formatMultiline(intakeCoachNotes)"></div>
+        <div class="ui-g-12">
+          <a routerLink="/intake/view"><i class="fa fa-file-text"></i> View Intake Form</a>
+        </div>
+      </ng-container>
+      <div *ngIf="!hasCompletedIntake" class="ui-g-12">
+        <span class="app-chip-notify">1</span> &nbsp;Client needs to complete Intake Questionnaire.
+      </div>
+    </ng-container>
+  </ng-container>
+</div>

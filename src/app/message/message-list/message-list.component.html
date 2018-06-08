@@ -1,0 +1,22 @@
+<div class="ui-g-12 ui-g-nopad" style="margin-top:4.5em; margin-bottom:6.5em;">
+  <app-check-version></app-check-version>
+  <div class="ui-g-12" *ngFor="let message of messages | async">
+    <ng-container *ngIf="message.fromUserID == toUserID">
+      <div class="ui-g-8" style="background-color:Beige" [innerHTML]="formatMultiline(message.messageText)"></div>
+      <div class="ui-g-4">&nbsp;</div>
+    </ng-container>
+    <ng-container *ngIf="message.fromUserID == fromUserID">
+      <div class="ui-g-4">&nbsp;</div>
+      <div class="ui-g-8" style="background-color:DarkCyan;color:white" [innerHTML]="formatMultiline(message.messageText)"></div>
+    </ng-container>
+  </div>
+  <!-- Footer nav style -->
+  <div class="ui-g-12 ui-g-nopad app-message-footer">
+    <div class="ui-g-9">
+      <textarea pInputTextarea rows="2" style="width:100%;" [(ngModel)]="newMessage.messageText"></textarea>
+    </div>
+    <div class="ui-g-3">
+      <p-button (onClick)="onSendMessage()" label="Send"></p-button>
+    </div>
+  </div>
+</div>

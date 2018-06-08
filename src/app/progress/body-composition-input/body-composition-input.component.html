@@ -1,0 +1,96 @@
+<div class="ui-g" style="margin-top:4em;margin-bottom:1em;">
+  <app-check-version></app-check-version>
+  <div class="ui-g-12" style="padding-bottom:1em">
+    <div class="ui-g" style="float:left">
+      <h4 style="margin:0em">Body Composition Measurement</h4>
+    </div>
+  </div>
+  <p-dialog #weightInfo header="Weight" [visible]="false" (onHide)="weightInfo.visible = false;" modal="modal" [responsive]="true">
+    <div class="ui-g-12 ui-g-nopad">
+      Choose a time of day that is consistent from week to week to weigh yourself. First thing in the morning is ideal as body 
+      water levels should be similar. Also, make sure you're wearing a similar amount of clothing each time.
+    </div>
+  </p-dialog>
+  <p-dialog #bodyFatInfo header="Body Fat" [visible]="false" (onHide)="bodyFatInfo.visible = false;" modal="modal" [responsive]="true">
+    <div class="ui-g-12 ui-g-nopad">
+      Order the <a href="http://a.co/9PSRqOl" target="_blank">Accu-Measure Body Fat Caliper</a> from Amazon. Follow the 
+      directions to take a suprailliac skinfold measurement and convert it into a body fat percent reading. Although 
+      this is not the most accurate method for measuring body fat, it is sufficient for measuring the trend. The chart 
+      for converting the skinfold measurement (mm) into body fat percent (%) is <a href="https://www.accufitness.com/uploads/5/0/4/3/50439275/accufitness-accumeasure-bodyfatchart.pdf" target="_blank">available here</a>.
+    </div>
+  </p-dialog>
+  <p-dialog #waistInfo header="Waist" [visible]="false" (onHide)="waistInfo.visible = false;" modal="modal" [responsive]="true">
+    <div class="ui-g-12 ui-g-nopad">
+      Order the <a href="http://a.co/6EJdYGZ" target="_blank">MyoTape Body Tape Measure</a> from Amazon. Measure at the level of your navel.
+    </div>
+  </p-dialog>
+  <p-dialog #photoInfo header="Photo" [visible]="false" (onHide)="photoInfo.visible = false;" modal="modal" [responsive]="true">
+    <div class="ui-g-12 ui-g-nopad">
+      Take a photo that shows your entire body. A full-length mirror can be useful for this. Wear clothing that is revealing. The purpose 
+      of these photos is to see visual progress, which is a very useful tool. Maintain consistent posture and framing from week to week.
+    </div>
+  </p-dialog>
+  <div class="ui-g-5 ui-g-nopad">
+    <div class="ui-g-12" style="text-align:center">
+      <img *ngIf="!measurement.progressPic" style="max-width:90%" src="/assets/images/body-comp-selfie.png">
+      <img *ngIf="measurement.progressPic && (measurement.picUrl | async)" style="max-width:90%" [src]="measurement.picUrl | async">
+    </div>
+    <div class="ui-g-12" *ngIf="!measurement.progressPic" style="padding-top:0em">
+      <div *ngIf="!displayProgress" class="ui-g-12 ui-g-nopad" style="text-align:center">
+        <a (click)="photoInfo.visible = true;" style="color:#337AB7;"><i class="fa fa-info-circle"></i></a>&nbsp;
+        <a (click)="fileInput.click()" style="font-size:1.1em">Upload Photo</a>
+      </div>
+      <div *ngIf="displayProgress" class="ui-g-12 ui-g-nopad app-control-label" style="text-align:center;color:red">
+        {{ uploadStatus(uploadProgress | async) }}
+      </div>
+      <div class="ui-g-12 ui-g-nopad">
+        <input #fileInput style="display:none" type="file" (change)="uploadFile($event)" accept=".jpg">
+      </div>
+    </div>
+  </div>
+  <div class="ui-g-7 ui-g-nopad">
+    <div class="ui-g-12">
+      <div class="ui-g-6">
+        <div class="ui-g app-control-label" style="float:right">Weight</div>
+        <div class="ui-g" style="float:right;padding-right:0.5em">
+          <a (click)="weightInfo.visible = true;" style="color:#337AB7;"><i class="fa fa-info-circle"></i></a>
+        </div>
+      </div>
+      <div class="ui-g-4" style="padding-top:0em">
+        <input type="text" pInputText pKeyFilter="pnum" style="width:100%" [(ngModel)]="measurement.weight">
+      </div>
+      <div class="ui-g-2">lbs</div>
+    </div>
+    <div class="ui-g-12">
+      <div class="ui-g-6">
+        <div class="ui-g app-control-label" style="float:right">Body Fat</div>
+        <div class="ui-g" style="float:right;padding-right:0.5em">
+          <a (click)="bodyFatInfo.visible = true;" style="color:#337AB7;"><i class="fa fa-info-circle"></i></a>
+        </div>
+      </div>
+      <div class="ui-g-4" style="padding-top:0em">
+        <input type="text" pInputText pKeyFilter="pnum" style="width:100%" [(ngModel)]="measurement.abdominalFat">
+      </div>
+      <div class="ui-g-2" style="text-align:left">%</div>
+    </div>
+    <div class="ui-g-12">
+      <div class="ui-g-6">
+        <div class="ui-g app-control-label" style="float:right">Waist</div>
+        <div class="ui-g" style="float:right;padding-right:0.5em">
+          <a (click)="waistInfo.visible = true;" style="color:#337AB7;"><i class="fa fa-info-circle"></i></a>
+        </div>
+      </div>
+      <div class="ui-g-4" style="padding-top:0em">
+        <input type="text" pInputText pKeyFilter="pnum" style="width:100%" [(ngModel)]="measurement.waistCircumference">
+      </div>
+      <div class="ui-g-2">in</div>
+    </div>
+  </div>
+  <p-dialog header="Form Incomplete" [(visible)]="displayInvalidFormDialog" modal="modal" (onHide)="displayInvalidFormDialog = false">
+    <div class="ui-g-12" style="padding-left:0em;padding-right:0em">Please correct the following issue(s):</div>
+    <div class="ui-g-12" *ngFor="let issue of formIssues" style="padding-left:0em;padding-right:0em">{{ issue }}</div>
+  </p-dialog>
+  <div class="ui-g-12" style="padding-top:1em;padding-right:1em;text-align:right">
+    <p-button label="Submit to Coach" (click)="onClickSubmit()"></p-button>
+  </div>
+</div>

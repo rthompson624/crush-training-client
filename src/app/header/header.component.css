@@ -1,0 +1,7 @@
+.app-navbar-container {
+  position:fixed;
+  top:0;
+  border-bottom-style: solid;
+  border-bottom-width: 0.2em;
+  background-color: white;
+}

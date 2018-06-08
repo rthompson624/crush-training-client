@@ -1,0 +1,7 @@
+To create a new (independent) trainer:
+
+Dev
+http://localhost:4200/signup-trainer?organization=WNIuIaL3VxHWGkHPABgE
+
+Prod
+https://training-app-32da6.firebaseapp.com/signup-trainer?organization=WNIuIaL3VxHWGkHPABgE

@@ -1,0 +1,45 @@
+<div class="ui-g-12 ui-g-nopad app-navbar-container" style="max-width:414px">
+  <ng-container *ngIf="userAuthenticated">
+    <ng-container *ngIf="isTrainer">
+      <div class="ui-g-4">
+        <a routerLink="/dashboard-trainer" style="font-size:1.25em;">
+          <i class="fa fa-home fa-lg"></i> Home
+        </a>
+      </div>
+      <div class="ui-g-4" style="text-align:center">
+        <a href="http://www.crush-training.com/" target="_blank">
+          <img src="/assets/images/crush_logo.jpg" style="height:2em">
+        </a>
+      </div>
+      <div class="ui-g-4" style="text-align:right">
+        <a (click)="onLogout()" style="font-size:1.25em;">Logout 
+          <i class="fa fa-power-off fa-lg"></i>
+        </a>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="!isTrainer">
+      <div class="ui-g-8">
+        <div class="ui-g" style="float: left;">
+          <a routerLink="/dashboard" style="font-size:1.25em;">
+            <i class="fa fa-home fa-lg"></i> Home
+          </a>
+        </div>
+        <div class="ui-g" style="float:left;padding-left:0.5em;font-size:1.2em;">|</div>
+        <div class="ui-g" style="padding-left:0.5em;">
+          <a routerLink="/profile" style="font-size:1.25em;">
+            <i class="fa fa-user fa-lg"></i> Profile
+          </a>
+        </div>
+      </div>
+      <div class="ui-g-4" style="text-align:right;">
+        <a (click)="onLogout()" style="font-size:1.25em;">Logout 
+          <i class="fa fa-power-off fa-lg"></i>
+        </a>
+      </div>
+    </ng-container>
+  </ng-container>
+  <ng-container *ngIf="!userAuthenticated">
+    <div class="ui-g-8">&nbsp;</div>
+    <div class="ui-g-4" style="text-align:right;">&nbsp;</div>
+  </ng-container>
+</div>

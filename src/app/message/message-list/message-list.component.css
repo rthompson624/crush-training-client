@@ -1,0 +1,9 @@
+.app-message-footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  max-width: 414px;
+  background-color: white;
+  border-top-style: solid;
+  border-top-width: 0.2em;
+}

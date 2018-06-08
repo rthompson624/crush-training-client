@@ -1,0 +1,26 @@
+<div class="ui-g" style="margin-top:3.5em;margin-bottom:2em;">
+  <app-check-version></app-check-version>
+  <div class="ui-g-12">
+    <h4 style="margin:0em">Subscription Signup</h4>
+  </div>
+  <div class="ui-g-12">
+    <h5 style="margin:0em">Select monthly plan:</h5>
+  </div>
+  <div *ngFor="let plan of plans" class="ui-g-12">
+    <p-radioButton name="group1" value="{{ plan[0] }}" label="{{ plan[0] }} (up to {{ plan[1] }} clients) ${{ plan[2] / 100 }}" [(ngModel)]="selectedPlan"></p-radioButton>
+  </div>
+  <div class="ui-g-12">
+    <p-button (onClick)="handlePayment()" label="Checkout" [disabled]="disableCheckoutButton"></p-button>
+  </div>
+  <ng-container *ngIf="subscriptionObs | async; let subscription">
+    <div *ngIf="!subscription.stripeSubscriptionID && !subscription.subscriptionError" class="ui-g-12" style="color:red;font-size:1.2em;font-weight:500">
+      Processing payment. Please wait...
+    </div>
+    <div *ngIf="subscription.stripeSubscriptionID" class="ui-g-12" style="color:green;font-size:1.2em;font-weight:500">
+      Payment received. Thank you! Your subscription is now active.
+    </div>
+    <div *ngIf="subscription.subscriptionError" class="ui-g-12" style="color:red;font-size:1.2em;font-weight:500">
+      Uh-oh, there was a problem. {{ subscription.subscriptionError }}
+    </div>
+  </ng-container>
+</div>

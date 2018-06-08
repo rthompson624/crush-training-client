@@ -1,0 +1,191 @@
+<!-- Trainer Dashboard -->
+<div class="ui-g" style="margin-top:3.5em;margin-bottom:5em;">
+  <app-check-version></app-check-version>
+  <div class="ui-g-12">
+    <h4 style="margin-top:0em">{{formatDate(dateToday)}}</h4>
+  </div>
+  <p-dialog #info1 header="Info" [visible]="false" (onHide)="info1.visible = false;" modal="modal" [responsive]="true">
+    <div class="ui-g-12 ui-g-nopad">
+      A hollow chip indicates a workout is planned (via the schedule defined in the client's profile), but hasn't been programmed.
+    </div>
+    <div class="ui-g-12 ui-g-nopad" style="padding-top:0.5em">
+      <div class="ui-g app-chip-blue-inverse" style="float:left">In Person</div>
+      <div class="ui-g" style="float:left;padding-left:0.5em"><em>not programmed</em></div>
+    </div>
+    <div class="ui-g-12 ui-g-nopad" style="padding-top:0.5em">
+      <div class="ui-g app-chip-blue" style="float:left">In Person</div>
+      <div class="ui-g" style="float:left;padding-left:0.5em"><em>programmed</em></div>
+    </div>
+    <div class="ui-g-12 ui-g-nopad" style="padding-top:0.5em">
+      Tap the chip to enter the workout edit screen.
+    </div>
+  </p-dialog>
+  <ng-container *ngIf="user && clients">
+    <p-dialog header="Subscription Expired" [visible]="displaySubscriptionExpiredDialog" (onHide)="displaySubscriptionExpiredDialog = false" modal="modal" [responsive]="true">
+      Please subscribe to regain full use of all application features.
+    </p-dialog>
+    <p-dialog header="Plan Limit Exceeded" [visible]="displayExceededClientLimitDialog" (onHide)="displayExceededClientLimitDialog = false" modal="modal" [responsive]="true">
+      You currently have {{ getActiveClientCount() }} active clients which exceeds the {{ user.plan }} plan limit of {{ getPlanClientLimit(user.plan) }}. You can either upgrade to a higher plan, or set some clients to inactive to regain full use of all application features.
+    </p-dialog>
+  </ng-container>
+  <div class="ui-g-12" style="padding-bottom:1em">
+    <div class="ui-g" style="float:left">
+      <h4 style="margin:0em">Workouts Today</h4>
+    </div>
+    <div class="ui-g" style="float:left;padding-left:0.5em">
+      <a (click)="info1.visible = true;" style="color:#337AB7;"><i class="fa fa-info-circle"></i></a>
+    </div>
+  </div>
+  <!-- Unprogrammed Workout Reminders -->
+  <ng-container *ngFor="let schedule of programmingNeededFor(dateToday)">
+    <div *ngIf="schedule.meetingType == 'inperson'" class="ui-g-12" style="padding-top:0em;">
+      <div class="ui-g-4 ui-g-nopad">
+        {{ getClient(schedule.userID).nameFirst }} {{ getClient(schedule.userID).nameLast }}
+      </div>
+      <div class="ui-g-3 ui-g-nopad">
+        <div class="ui-g app-chip-blue-inverse">
+          <a (click)="onNewWorkoutFromReminder(schedule)">In Person</a>
+        </div>
+      </div>
+      <div class="ui-g-3 ui-g-nopad">
+        {{ formatTime(schedule.displayTime) }}
+      </div>
+    </div>
+    <div *ngIf="schedule.meetingType == 'remote'" class="ui-g-12" style="padding-top:0em;">
+      <div class="ui-g-4 ui-g-nopad">
+        {{ getClient(schedule.userID).nameFirst }} {{ getClient(schedule.userID).nameLast }}
+      </div>
+      <div class="ui-g-3 ui-g-nopad">
+        <div class="ui-g app-chip-purple-inverse">
+          <a (click)="onNewWorkoutFromReminder(schedule)">Remote</a>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+  <!-- In Person Workouts -->
+  <ng-container *ngFor="let workout of workoutsTodayObserv | async">
+    <div class="ui-g-12" *ngIf="workout.meetingType == 'inperson'" style="padding-top:0em;">
+      <div class="ui-g-4 ui-g-nopad">{{workout.userName}}</div>
+      <div class="ui-g-3 ui-g-nopad">
+        <div *ngIf="workout.status == 'open'" class="ui-g app-chip-blue">
+          <a (click)="onSelectWorkout(workout)">In Person</a>
+        </div>
+        <div *ngIf="workout.status == 'complete'" class="ui-g app-chip-blue">
+          In Person
+        </div>
+      </div>
+      <div class="ui-g-3 ui-g-nopad">
+        <div class="ui-g">{{formatTime(workout.assignmentDate)}}</div>
+      </div>
+      <div class="ui-g-2 ui-g-nopad" *ngIf="workout.status == 'complete'">
+        <div class="ui-g-12 ui-g-nopad" style="color:green;"><i class="fa fa-check-square-o"></i> DONE</div>
+      </div>
+      <div class="ui-g-2 ui-g-nopad" *ngIf="workoutOverdue(workout)">
+        <div class="ui-g-12 ui-g-nopad" style="color:red;"><i class="fa fa-exclamation"></i> OPEN</div>
+      </div>
+    </div>
+  </ng-container>
+  <!-- Remote Workouts -->
+  <ng-container *ngFor="let workout of workoutsTodayObserv | async">
+    <div class="ui-g-12" *ngIf="workout.meetingType == 'remote'" style="padding-top:0em;">
+      <div class="ui-g-4 ui-g-nopad">{{workout.userName}}</div>
+      <div class="ui-g-3 ui-g-nopad">
+        <div *ngIf="workout.status == 'open'" class="ui-g app-chip-purple">
+          <a (click)="onSelectWorkout(workout)">Remote</a>
+        </div>
+        <div *ngIf="workout.status == 'complete'" class="ui-g app-chip-purple">
+          Remote
+        </div>
+      </div>
+      <div class="ui-g-3 ui-g-nopad">&nbsp;</div>
+      <div class="ui-g-2 ui-g-nopad" *ngIf="workout.status == 'complete'">
+        <div class="ui-g-12 ui-g-nopad" style="color:green;"><i class="fa fa-check-square-o"></i> DONE</div>
+      </div>
+    </div>
+  </ng-container>
+  <!-- Messages -->
+  <ng-container *ngIf="clients">
+    <ng-container *ngIf="unreadMessages">
+      <ng-container *ngIf="unreadMessages.length > 0">
+        <div class="ui-g-12"><hr style="margin:0em"></div>
+        <div class="ui-g-12">
+          <h4 style="margin:0em">Messages</h4>
+        </div>
+      </ng-container>
+      <ng-container *ngFor="let client of clients">
+        <div class="ui-g-12" *ngIf="unreadMessageCount(client) > 0" style="padding-top:0.3em;padding-bottom:0em;">
+          <div class="ui-g" style="float:left;">
+            <a (click)="onSelectMessage(client)">{{client.nameFirst}} {{client.nameLast}}</a>
+          </div>
+          <div class="ui-g" style="padding-left:0.5em;">
+            <span class="app-chip-notify">{{ unreadMessageCount(client) }}</span>
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
+  </ng-container>
+  <!-- Missed Assignments -->
+  <ng-container *ngIf="clients && workoutsYesterday && surveysYesterday && bodyCompsLoaded">
+    <ng-container *ngIf="getMissedAssignments().length > 0">
+      <p-dialog #info2 header="Info" [visible]="false" (onHide)="info2.visible = false;" modal="modal" [responsive]="true">
+        <div class="ui-g-12 ui-g-nopad">
+          <div class="ui-g-2"><i class="fa fa-lg fa-child"></i></div>
+          <div class="ui-g-10">Workout</div>
+        </div>
+        <div class="ui-g-12 ui-g-nopad">
+          <div class="ui-g-2"><i class="fa fa-lg fa-file-text-o"></i></div>
+          <div class="ui-g-10">Lifestyle Survey</div>
+        </div>
+        <div class="ui-g-12 ui-g-nopad">
+          <div class="ui-g-2"><i class="fa fa-lg fa-line-chart"></i></div>
+          <div class="ui-g-10">Body Comp Measurement</div>
+        </div>
+      </p-dialog>
+      <div class="ui-g-12"><hr style="margin:0em"></div>
+      <div class="ui-g-12 ui-g-nopad">
+        <div class="ui-g-6">
+          <div class="ui-g" style="float:left"><h4 style="margin:0em">Missed Yesterday</h4></div>
+          <div class="ui-g" style="float:left;padding-left:0.5em"><a (click)="info2.visible = true;" style="color:#337AB7;"><i class="fa fa-info-circle"></i></a></div>
+        </div>
+        <!-- <div class="ui-g-1"></div> -->
+        <div class="ui-g-2" style="text-align:center"><i class="fa fa-lg fa-child"></i></div>
+        <div class="ui-g-2" style="text-align:center"><i class="fa fa-lg fa-file-text-o"></i></div>
+        <div class="ui-g-2" style="text-align:center"><i class="fa fa-lg fa-line-chart"></i></div>
+        <!-- <div class="ui-g-1"></div> -->
+      </div>
+      <div *ngFor="let missedAssignment of getMissedAssignments()" class="ui-g-12 ui-g-nopad">
+        <div class="ui-g-6" style="padding-top:0em">{{ missedAssignment.clientName }}</div>
+        <!-- <div class="ui-g-1"></div> -->
+        <div class="ui-g-2" style="text-align:center;color:red;padding-top:0em"><i *ngIf="missedAssignment.missedWorkout" class="fa fa-times"></i></div>
+        <div class="ui-g-2" style="text-align:center;color:red;padding-top:0em"><i *ngIf="missedAssignment.missedSurvey" class="fa fa-times"></i></div>
+        <div class="ui-g-2" style="text-align:center;color:red;padding-top:0em"><i *ngIf="missedAssignment.missedBodyComp" class="fa fa-times"></i></div>
+        <!-- <div class="ui-g-1"></div> -->
+      </div>
+    </ng-container>
+  </ng-container>
+  <!-- Subscription reminder -->
+  <ng-container *ngIf="user">
+    <!-- Case when free trial is due to expire within 5 days -->
+    <div class="ui-g-12" *ngIf="!trainerSubscription && dayDiff(dateToday, user.planExpiration) < 5">
+      <a routerLink="/payment"><i class="fa fa-user-plus"></i> Subscribe</a>
+      <div class="ui-g-12 ui-g-nopad" *ngIf="dayDiff(dateToday, user.planExpiration) >= 0">
+        <i class="fa fa-exclamation" style="color:red"></i> &nbsp;Your subscription ends {{ formatDate(user.planExpiration) }}.
+      </div>
+      <div class="ui-g-12 ui-g-nopad" *ngIf="dayDiff(dateToday, user.planExpiration) < 0">
+        <i class="fa fa-exclamation" style="color:red"></i> &nbsp;Your subscription has expired.
+      </div>
+    </div>
+  </ng-container>
+  <!-- Dashboard footer navigation -->
+  <div class="ui-g-12 ui-g-nopad app-dashboard-footer">
+    <div class="ui-g-4 text-center">
+      <a routerLink="/clients"><i class="fa fa-users fa-3x"></i></a><br>
+    </div>
+    <div class="ui-g-4 text-center">
+      <a routerLink="/calendar"><i class="fa fa-calendar fa-3x"></i></a><br>
+    </div>
+    <div class="ui-g-4 text-center">
+      <a routerLink="/configuration"><i class="fa fa-cogs fa-3x"></i></a><br>
+    </div>
+  </div>
+</div>

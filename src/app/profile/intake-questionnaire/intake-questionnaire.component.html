@@ -1,0 +1,277 @@
+<div class="ui-g" style="margin-top:3em;margin-bottom:2em;">
+  <div class="ui-g-12"><h4>Intake Questionnaire</h4></div>
+  <form [formGroup]="userform" (ngSubmit)="onSubmit()">
+    <!-- Location -->
+    <div class="ui-g-12 app-control-label">Location</div>
+    <div class="ui-g-12">
+      <div class="ui-g-8 ui-g-nopad">
+        <input pInputText placeholder="City" formControlName="city" (blur)="userform.controls['city'].markAsDirty();">
+      </div>
+      <div class="ui-g-4 ui-g-nopad" style="text-align:right;">
+        <ng-container *ngIf="!userform.controls['city'].valid && userform.controls['city'].dirty">
+          <span class="ui-message ui-messages-error ui-corner-all"><i class="fa fa-close"></i> Required</span>
+        </ng-container>
+      </div>
+    </div>
+    <div class="ui-g-12">
+      <div class="ui-g-8 ui-g-nopad">
+        <p-dropdown [options]="stateOptions" formControlName="state" placeholder="State..."></p-dropdown>
+      </div>
+    </div>
+    <div class="ui-g-12">
+      <div class="ui-g-8 ui-g-nopad">
+        <p-dropdown [options]="countryOptions" formControlName="country" placeholder="Country..." (onBlur)="userform.controls['country'].markAsDirty();"></p-dropdown>
+      </div>
+      <div class="ui-g-4 ui-g-nopad" style="text-align:right;">
+        <ng-container *ngIf="!userform.controls['country'].valid && userform.controls['country'].dirty">
+          <span class="ui-message ui-messages-error ui-corner-all"><i class="fa fa-close"></i> Required</span>
+        </ng-container>
+      </div>
+    </div>
+    <!-- Phone -->
+    <div class="ui-g-12 app-control-label">Phone Number</div>
+    <div class="ui-g-12">
+      <div class="ui-g-8 ui-g-nopad">
+        <p-inputMask formControlName="phone" mask="(999) 999-9999" placeholder="(999) 999-9999"></p-inputMask>
+      </div>
+      <div class="ui-g-4 ui-g-nopad" style="text-align:right;">
+        <ng-container *ngIf="!userform.controls['phone'].valid && userform.controls['phone'].dirty">
+          <span class="ui-message ui-messages-error ui-corner-all"><i class="fa fa-close"></i> Required</span>
+        </ng-container>
+      </div>
+    </div>
+    <!-- Birthday -->
+    <div class="ui-g-12 app-control-label">Birthday</div>
+    <div class="ui-g-12">
+      <div class="ui-g-8 ui-g-nopad">
+        <p-calendar formControlName="birthday" [monthNavigator]="true" [yearNavigator]="true" yearRange="1930:2010" (onBlur)="userform.controls['birthday'].markAsDirty();"></p-calendar>
+      </div>
+      <div class="ui-g-4 ui-g-nopad" style="text-align:right;">
+        <ng-container *ngIf="!userform.controls['birthday'].valid && userform.controls['birthday'].dirty">
+          <span class="ui-message ui-messages-error ui-corner-all"><i class="fa fa-close"></i> Required</span>
+        </ng-container>
+      </div>
+    </div>
+    <!-- Gender -->
+    <div class="ui-g-12 app-control-label">Gender</div>
+    <div class="ui-g-12">
+      <div class="ui-g-8 ui-g-nopad">
+        <p-dropdown [options]="genderOptions" formControlName="gender" placeholder="Select..." (onBlur)="userform.controls['gender'].markAsDirty();"></p-dropdown>
+      </div>
+      <div class="ui-g-4 ui-g-nopad" style="text-align:right;">
+        <ng-container *ngIf="!userform.controls['gender'].valid && userform.controls['gender'].dirty">
+          <span class="ui-message ui-messages-error ui-corner-all"><i class="fa fa-close"></i> Required</span>
+        </ng-container>
+      </div>
+    </div>
+    <!-- Height -->
+    <div class="ui-g-12 app-control-label">Height</div>
+    <div class="ui-g-12">
+      <div class="ui-g-8 ui-g-nopad">
+        <p-inputMask formControlName="height" mask="9-9a" placeholder="ft-in" characterPattern="[0-9]?"></p-inputMask>
+      </div>
+      <div class="ui-g-4 ui-g-nopad" style="text-align:right;">
+        <ng-container *ngIf="!userform.controls['height'].valid && userform.controls['height'].dirty">
+          <span class="ui-message ui-messages-error ui-corner-all"><i class="fa fa-close"></i> Required</span>
+        </ng-container>
+      </div>
+    </div>
+    <!-- Weight -->
+    <div class="ui-g-12 app-control-label">Weight</div>
+    <div class="ui-g-12">
+      <div class="ui-g-8 ui-g-nopad">
+        <input pInputText type="number" formControlName="weight" (blur)="userform.controls['weight'].markAsDirty();">
+      </div>
+      <div class="ui-g-4 ui-g-nopad" style="text-align:right;">
+        <ng-container *ngIf="!userform.controls['weight'].valid && userform.controls['weight'].dirty">
+          <span class="ui-message ui-messages-error ui-corner-all"><i class="fa fa-close"></i> Required</span>
+        </ng-container>
+      </div>
+    </div>
+    <!-- Profession -->
+    <div class="ui-g-12 app-control-label">Profession</div>
+    <div class="ui-g-12">
+      <div class="ui-g-8 ui-g-nopad">
+        <input pInputText formControlName="profession" (blur)="userform.controls['profession'].markAsDirty();">
+      </div>
+      <div class="ui-g-4 ui-g-nopad" style="text-align:right;">
+        <ng-container *ngIf="!userform.controls['profession'].valid && userform.controls['profession'].dirty">
+          <span class="ui-message ui-messages-error ui-corner-all"><i class="fa fa-close"></i> Required</span>
+        </ng-container>
+      </div>
+    </div>
+    <!-- Outcome -->
+    <div class="ui-g-12 app-control-label">What result are you seeking with my help?</div>
+    <div class="ui-g-12">
+      <div class="ui-g-8 ui-g-nopad">
+        <textarea pInputTextarea formControlName="outcome" rows="2" style="width:100%;" (blur)="userform.controls['outcome'].markAsDirty();"></textarea>
+      </div>
+      <div class="ui-g-4 ui-g-nopad" style="text-align:right;">
+        <ng-container *ngIf="!userform.controls['outcome'].valid && userform.controls['outcome'].dirty">
+          <span class="ui-message ui-messages-error ui-corner-all"><i class="fa fa-close"></i> Required</span>
+        </ng-container>
+      </div>
+    </div>
+    <!-- Outcome Reason -->
+    <div class="ui-g-12 app-control-label">Why do you want this result?</div>
+    <div class="ui-g-12">
+      <div class="ui-g-8 ui-g-nopad">
+        <textarea pInputTextarea formControlName="outcomeReason" rows="2" style="width:100%;" (blur)="userform.controls['outcomeReason'].markAsDirty();"></textarea>
+      </div>
+      <div class="ui-g-4 ui-g-nopad" style="text-align:right;">
+        <ng-container *ngIf="!userform.controls['outcomeReason'].valid && userform.controls['outcomeReason'].dirty">
+          <span class="ui-message ui-messages-error ui-corner-all"><i class="fa fa-close"></i> Required</span>
+        </ng-container>
+      </div>
+    </div>
+    <!-- Medical -->
+    <div class="ui-g-12 app-control-label">Do you have any medical conditions?</div>
+    <div class="ui-g-12">
+      <div class="ui-g-8 ui-g-nopad">
+        <div class="ui-g-3 ui-g-nopad">
+          <p-radioButton name="medical" value="no" label="No" formControlName="medical"></p-radioButton>
+        </div>
+        <div class="ui-g-3 ui-g-nopad">
+          <p-radioButton name="medical" value="yes" label="Yes" formControlName="medical"></p-radioButton>
+        </div>
+      </div>
+      <div class="ui-g-4 ui-g-nopad" style="text-align:right;">
+        <ng-container *ngIf="!userform.controls['medical'].valid && userform.controls['medical'].dirty">
+          <span class="ui-message ui-messages-error ui-corner-all"><i class="fa fa-close"></i> Required</span>
+        </ng-container>
+      </div>
+    </div>
+    <!-- Medical Description -->
+    <div class="ui-g-12 app-control-label">If yes to above please describe.</div>
+    <div class="ui-g-12">
+      <div class="ui-g-8 ui-g-nopad">
+        <textarea pInputTextarea formControlName="medicalDesc" rows="2" style="width:100%;"></textarea>
+      </div>
+      <div class="ui-g-4 ui-g-nopad" style="text-align:right;">
+      </div>
+    </div>
+    <!-- Injury -->
+    <div class="ui-g-12 app-control-label">Do you have any injuries?</div>
+    <div class="ui-g-12">
+      <div class="ui-g-8 ui-g-nopad">
+        <div class="ui-g-3 ui-g-nopad">
+          <p-radioButton name="injury" value="no" label="No" formControlName="injury"></p-radioButton>
+        </div>
+        <div class="ui-g-3 ui-g-nopad">
+          <p-radioButton name="injury" value="yes" label="Yes" formControlName="injury"></p-radioButton>
+        </div>
+      </div>
+      <div class="ui-g-4 ui-g-nopad" style="text-align:right;">
+        <ng-container *ngIf="!userform.controls['injury'].valid && userform.controls['injury'].dirty">
+          <span class="ui-message ui-messages-error ui-corner-all"><i class="fa fa-close"></i> Required</span>
+        </ng-container>
+      </div>
+    </div>
+    <!-- Injury Description -->
+    <div class="ui-g-12 app-control-label">If yes to above please describe.</div>
+    <div class="ui-g-12">
+      <div class="ui-g-8 ui-g-nopad">
+        <textarea pInputTextarea formControlName="injuryDesc" rows="2" style="width:100%;"></textarea>
+      </div>
+      <div class="ui-g-4 ui-g-nopad" style="text-align:right;">
+      </div>
+    </div>
+    <!-- Stress Level -->
+    <div class="ui-g-12 app-control-label">Daily stress level: {{ userform.get('stressLevel').value }}</div>
+    <div class="ui-g-12">
+      <div class="ui-g-8 ui-g-nopad" style="padding-left:0.5em;">
+        <p-slider formControlName="stressLevel" [style]="{'width':'100%'}" [min]="0" [max]="5"></p-slider>
+      </div>
+      <div class="ui-g-4 ui-g-nopad" style="text-align:right;">
+        <ng-container *ngIf="!userform.controls['stressLevel'].valid && userform.controls['stressLevel'].dirty">
+          <span class="ui-message ui-messages-error ui-corner-all"><i class="fa fa-close"></i> Required</span>
+        </ng-container>
+      </div>
+    </div>
+    <!-- Sleep Hours -->
+    <div class="ui-g-12 app-control-label">Hours of sleep per night: {{ userform.get('hoursSleep').value }}</div>
+    <div class="ui-g-12">
+      <div class="ui-g-8 ui-g-nopad" style="padding-left:0.5em;">
+        <p-slider formControlName="hoursSleep" [style]="{'width':'100%'}" [min]="1" [max]="10"></p-slider>
+      </div>
+      <div class="ui-g-4 ui-g-nopad" style="text-align:right;">
+        <ng-container *ngIf="!userform.controls['hoursSleep'].valid && userform.controls['hoursSleep'].dirty">
+          <span class="ui-message ui-messages-error ui-corner-all"><i class="fa fa-close"></i> Required</span>
+        </ng-container>
+      </div>
+    </div>
+    <!-- Walking -->
+    <div class="ui-g-12 app-control-label">Minutes per day walking: {{ userform.get('minutesWalk').value }}</div>
+    <div class="ui-g-12">
+      <div class="ui-g-8 ui-g-nopad" style="padding-left:0.5em;">
+        <p-slider formControlName="minutesWalk" [style]="{'width':'100%'}" [min]="0" [max]="60"></p-slider>
+      </div>
+      <div class="ui-g-4 ui-g-nopad" style="text-align:right;">
+        <ng-container *ngIf="!userform.controls['minutesWalk'].valid && userform.controls['minutesWalk'].dirty">
+          <span class="ui-message ui-messages-error ui-corner-all"><i class="fa fa-close"></i> Required</span>
+        </ng-container>
+      </div>
+    </div>
+    <!-- Water -->
+    <div class="ui-g-12 app-control-label">Daily water intake: {{ userform.get('water').value }} oz</div>
+    <div class="ui-g-12">
+      <div class="ui-g-8 ui-g-nopad" style="padding-left:0.5em;">
+        <p-slider formControlName="water" [style]="{'width':'100%'}" [min]="0" [max]="64"></p-slider>
+      </div>
+      <div class="ui-g-4 ui-g-nopad" style="text-align:right;">
+        <ng-container *ngIf="!userform.controls['water'].valid && userform.controls['water'].dirty">
+          <span class="ui-message ui-messages-error ui-corner-all"><i class="fa fa-close"></i> Required</span>
+        </ng-container>
+      </div>
+    </div>
+    <!-- Breakfast -->
+    <div class="ui-g-12 app-control-label">List a typical breakfast.</div>
+    <div class="ui-g-12">
+      <div class="ui-g-8 ui-g-nopad">
+        <textarea pInputTextarea formControlName="breakfast" rows="2" style="width:100%;" (blur)="userform.controls['breakfast'].markAsDirty();"></textarea>
+      </div>
+      <div class="ui-g-4 ui-g-nopad" style="text-align:right;">
+        <ng-container *ngIf="!userform.controls['breakfast'].valid && userform.controls['breakfast'].dirty">
+          <span class="ui-message ui-messages-error ui-corner-all"><i class="fa fa-close"></i> Required</span>
+        </ng-container>
+      </div>
+    </div>
+    <!-- Lunch -->
+    <div class="ui-g-12 app-control-label">List a typical lunch.</div>
+    <div class="ui-g-12">
+      <div class="ui-g-8 ui-g-nopad">
+        <textarea pInputTextarea formControlName="lunch" rows="2" style="width:100%;" (blur)="userform.controls['lunch'].markAsDirty();"></textarea>
+      </div>
+      <div class="ui-g-4 ui-g-nopad" style="text-align:right;">
+        <ng-container *ngIf="!userform.controls['lunch'].valid && userform.controls['lunch'].dirty">
+          <span class="ui-message ui-messages-error ui-corner-all"><i class="fa fa-close"></i> Required</span>
+        </ng-container>
+      </div>
+    </div>
+    <!-- Dinner -->
+    <div class="ui-g-12 app-control-label">List a typical dinner.</div>
+    <div class="ui-g-12">
+      <div class="ui-g-8 ui-g-nopad">
+        <textarea pInputTextarea formControlName="dinner" rows="2" style="width:100%;" (blur)="userform.controls['dinner'].markAsDirty();"></textarea>
+      </div>
+      <div class="ui-g-4 ui-g-nopad" style="text-align:right;">
+        <ng-container *ngIf="!userform.controls['dinner'].valid && userform.controls['dinner'].dirty">
+          <span class="ui-message ui-messages-error ui-corner-all"><i class="fa fa-close"></i> Required</span>
+        </ng-container>
+      </div>
+    </div>
+    <!-- Snacks -->
+    <div class="ui-g-12 app-control-label">List typical snacks.</div>
+    <div class="ui-g-12">
+      <div class="ui-g-8 ui-g-nopad">
+        <textarea pInputTextarea formControlName="snacks" rows="2" style="width:100%;"></textarea>
+      </div>
+      <div class="ui-g-4 ui-g-nopad" style="text-align:right;">
+      </div>
+    </div>
+    <div class="ui-g-12">
+      <p-button type="submit" label="Submit" [disabled]="!userform.valid" (click)="onSubmitClick();"></p-button>
+      <span *ngIf="!userform.valid" style="padding-left:1em;">(Click button to see fields missed)</span>
+    </div>
+  </form>
+</div>

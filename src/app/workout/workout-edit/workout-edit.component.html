@@ -1,0 +1,106 @@
+<div class="ui-g-12" style="margin-top:3em;margin-bottom:2em">
+  <app-check-version></app-check-version>
+  <ng-container *ngIf="workout">
+    <div *ngIf="user.type == 'client'" class="ui-g-12 ui-g-nopad">
+      <h4 style="margin-bottom:0em">{{ formatLongDate(workout.assignmentDate) }}</h4>
+    </div>
+    <div *ngIf="user.type == 'trainer'" class="ui-g-12 ui-g-nopad">
+      <h4 *ngIf="subjectUser" style="margin-bottom:0em">{{ formatLongDate(workout.assignmentDate) }} - {{ subjectUser.nameFirst }} {{ subjectUser.nameLast }}</h4>
+    </div>
+    <div class="ui-g-12" *ngIf="workout.meetingType == 'inperson'" style="padding-left:0em;padding-bottom:0em;">
+      <div class="ui-g app-chip-blue" style="float:left;">
+        In Person
+      </div>
+      <div class="ui-g" style="padding-left:0.8em;"> {{ formatTime(workout.assignmentDate) }}</div>
+    </div>
+    <div class="ui-g-12" *ngIf="workout.meetingType == 'remote'">
+      <div class="ui-g app-chip-purple" style="float:left;">
+        Remote
+      </div>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="workout">
+    <p-dialog [header]="movementHistoryDialogTitle" [(visible)]="displayMovementHistoryDialog" modal="modal" (onHide)="onCloseMovementHistoryDialog()">
+      <div class="ui-g-12 ui-g-nopad" style="display: flex;">
+        <div class="ui-g-3" style="align-self:flex-end;padding-top:0em;">Date</div>
+        <div class="ui-g-3" style="align-self:flex-end;padding-top:0em;">Sets x Reps</div>
+        <div class="ui-g-3" style="align-self:flex-end;text-align:right;padding-top:0em;">Weight</div>
+        <div class="ui-g-3" style="align-self:flex-end;text-align:right;padding-top:0em;">Reps on last set</div>
+      </div>
+      <div class="ui-g-12 ui-g-nopad" *ngFor="let userMovement of userMovementHistory">
+        <div class="ui-g-3">{{ (userMovement.date.getMonth() + 1) + '/' + userMovement.date.getDate() }}</div>
+        <div class="ui-g-3">{{ userMovement.sets }} x {{ userMovement.reps }}</div>
+        <div class="ui-g-3" style="text-align:right;">{{ userMovement.weight }}</div>
+        <div class="ui-g-3" style="text-align:right;">{{ userMovement.repsLastSet }}</div>
+      </div>
+    </p-dialog>
+    <p-dialog [header]="videoDialogTitle" [(visible)]="displayVideoDialog" modal="modal" (onHide)="onCloseVideoDialog()">
+      <iframe [src]=url frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    </p-dialog>
+    <ng-container *ngFor="let segment of workout.segments">
+      <div *ngIf="segment == firstSegmentWithMovement" class="ui-g-12 ui-g-nopad" style="display: flex;">
+        <div class="ui-g-6" style="align-self:flex-end;padding-top:0em;">Movement</div>
+        <div class="ui-g-2" style="align-self:flex-end;padding-top:0em;">Sets x Reps</div>
+        <div class="ui-g-2" style="align-self:flex-end;text-align:right;padding-top:0em;">Weight</div>
+        <div class="ui-g-2" style="align-self:flex-end;text-align:right;padding-top:0em;">Reps in last set</div>
+      </div>
+      <div class="ui-g-12" *ngIf="segment.type == 'circuit' && segment.order == 'A'" style="padding-top:1em"></div>
+      <div class="ui-g-12 ui-g-nopad app-well">
+        <ng-container *ngIf="segment.type == 'singleset' || segment.type == 'superset'">
+          <div class="ui-g-12 ui-g-nopad" *ngFor="let exercise of segment.exercises">
+            <div class="ui-g-6" *ngIf="segment.type == 'superset'">
+              <div class="ui-g">
+                <div class="ui-g-12 ui-g-nopad">
+                  {{ segment.order }}{{ exercise.order }}) {{ exercise.movement }}
+                </div>
+                <div class="ui-g-12 ui-g-nopad" style="margin-left:2em;">
+                  <a *ngIf="exercise.movementID" (click)="displayMovementHistory(exercise.movementID)"><i class="fa fa-history"></i></a>
+                  <a style="padding-left:2.5em;" *ngIf="exercise.movementID" (click)="playVideo(exercise.movementID)"><i class="fa fa-video-camera"></i></a>
+                </div>
+              </div>
+            </div>
+            <div class="ui-g-6" *ngIf="segment.type == 'singleset'">
+              <div class="ui-g">
+                <div class="ui-g-12 ui-g-nopad">
+                  {{ segment.order }}) {{ exercise.movement }}
+                </div>
+                <div class="ui-g-12 ui-g-nopad" style="margin-left:1.2em;">
+                  <a *ngIf="exercise.movementID" (click)="displayMovementHistory(exercise.movementID)"><i class="fa fa-history"></i></a>
+                  <a style="padding-left:2.5em;" *ngIf="exercise.movementID" (click)="playVideo(exercise.movementID)"><i class="fa fa-video-camera"></i></a>
+                </div>
+              </div>
+            </div>
+            <div class="ui-g-2">{{ exercise.sets }} x {{ exercise.reps }}</div>
+            <div class="ui-g-2" style="text-align:right"><input type="text" pInputText pKeyFilter="pint" [(ngModel)]="exercise.weight" size="4" style="text-align:right;"></div>
+            <div class="ui-g-2" style="text-align:right"><input type="text" pInputText pKeyFilter="pint" [(ngModel)]="exercise.repsLastSet" size="4" style="text-align:right;"></div>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="segment.type == 'circuit'">
+          <div class="ui-g-12">
+            {{ segment.order }}) {{ segment.circuitName }}
+          </div>
+          <div class="ui-g-12 ui-g-nopad">
+            <div class="ui-g-1"></div>
+            <div class="ui-g-11" [innerHTML]="formatMultiline(segment.circuitDescription)"></div>
+          </div>
+          <div class="ui-g-12 ui-g-nopad">
+            <div class="ui-g-1"></div>
+            <div class="ui-g-2">Result:</div>
+            <div class="ui-g-9">
+              <input type="text" style="width:100%;" pInputText [(ngModel)]="segment.circuitResult">
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </ng-container>
+    <p-dialog header="Missing Fields" [(visible)]="displayInvalidFormDialog" modal="modal" (onHide)="displayInvalidFormDialog = false">
+      <div class="ui-g">Some fields are blank. Go ahead. Brag a little.</div>
+    </p-dialog>
+    <div class="ui-g-12 ui-g-nopad">
+      <p-button label="Submit to Coach" (click)="submitWorkout()"></p-button>
+    </div>
+    <div *ngIf="user.type == 'trainer'" class="ui-g-12 ui-g-nopad" style="padding-top:1.5em;">
+      <a (click)="onEditWorkout()"><i class="fa fa-pencil"></i> Edit Workout</a>
+    </div>
+  </ng-container>
+</div>

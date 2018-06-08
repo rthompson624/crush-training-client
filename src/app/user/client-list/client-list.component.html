@@ -1,0 +1,57 @@
+<div class="ui-g" style="margin-top:3.5em;margin-bottom:2em">
+  <app-check-version></app-check-version>
+  <div class="ui-g-12">
+    <div class="ui-g" style="float:left">
+      <h4 style="margin:0em">Clients</h4>
+    </div>
+    <div class="ui-g" style="float:left;padding-left:0.5em">
+      <a (click)="info1.visible = true;" style="color:#337AB7;"><i class="fa fa-info-circle"></i></a>
+    </div>
+  </div>
+  <p-dialog #info1 header="Info" [visible]="false" (onHide)="info1.visible = false;" modal="modal" [responsive]="true">
+    <div class="ui-g-12 ui-g-nopad">
+      Onboard clients by sending them the link below in an email. The client will create an account and fill out the intake questionnaire. Upon completing these tasks, you can view their information and begin scheduling sessions.
+    </div>
+    <div class="ui-g-12 ui-g-nopad" style="padding-top:1em">
+      {{ clientSignupLink() }}
+    </div>
+  </p-dialog>
+  <div class="ui-g-12">
+    <p-selectButton [options]="statusTypes" [(ngModel)]="selectedStatus" (onChange)="onChangeStatus()"></p-selectButton>
+  </div>
+  <ng-container *ngIf="displayClients">
+    <!-- Client row -->
+    <div class="ui-g-12" *ngFor="let client of displayClients">
+      <!-- Pic section -->
+      <ng-container *ngIf="client.hasProfilePic">
+        <div class="ui-g-4" *ngIf="client.picUrl | async; let url">
+          <a (click)="onSelectClient(client)"><img [src]="url" style="width:100%"></a>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="!client.hasProfilePic">
+        <div class="ui-g-4">
+          <a (click)="onSelectClient(client)"><img src="/assets/images/no-profile-pic-transgender.jpg" style="width:100%"></a>
+        </div>
+      </ng-container>
+      <!-- Info section -->
+      <div class="ui-g-8">
+        <!-- Name row -->
+        <div class="ui-g-12">
+          <a (click)="onSelectClient(client)">{{client.nameFirst + ' ' + client.nameLast}}</a>
+        </div>
+        <!-- Navigation row -->
+        <div class="ui-g-12">
+          <div class="ui-g" style="float:left;">
+            <a (click)="onSelectViewCalendar(client)"><i class="fa fa-calendar fa-lg"></i></a>
+          </div>
+          <div class="ui-g" style="float:left; padding-left:2em;">
+            <a (click)="onSelectMessage(client)"><i class="fa fa-comment fa-lg"></i></a>
+          </div>
+          <div class="ui-g" style="float:left; padding-left:2em;">
+            <a (click)="onSelectProgress(client)"><i class="fa fa-bar-chart fa-lg"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>

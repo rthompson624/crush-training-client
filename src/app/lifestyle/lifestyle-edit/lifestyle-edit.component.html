@@ -1,0 +1,53 @@
+<!-- List the day's lifestyle habits -->
+<div class="ui-g-12 ui-g-nopad" style="margin-top:3.5em;margin-bottom:2em;">
+  <app-check-version></app-check-version>
+  <div class="ui-g-12">
+    <h4 style="margin:0em;">{{ formatDate(survey.date) }}</h4>
+  </div>
+  <div class="ui-g-12">
+    <h4 style="margin:0em;">Lifestyle</h4>
+  </div>
+  <div class="ui-g-12" [hidden]="survey.status == 'complete'">
+    <!-- Survey -->
+    <div class="ui-g-12 ui-g-nopad">
+      <p-panel header="How did you do today in the following areas?">
+        <div class="ui-g">
+          <div class="ui-g-4 app-rating-label">Sleep</div>
+          <div class="ui-g-8 app-rating-container"><p-rating [(ngModel)]="survey.sleepRating" [cancel]="false"></p-rating></div>
+          <div class="ui-g-4 app-rating-label">Nutrition</div>
+          <div class="ui-g-8 app-rating-container"><p-rating [(ngModel)]="survey.nutritionRating" [cancel]="false"></p-rating></div>
+          <div class="ui-g-4 app-rating-label">Hydration</div>
+          <div class="ui-g-8 app-rating-container"><p-rating [(ngModel)]="survey.hydrationRating" [cancel]="false"></p-rating></div>
+          <div class="ui-g-4 app-rating-label">Movement</div>
+          <div class="ui-g-8 app-rating-container"><p-rating [(ngModel)]="survey.movementRating" [cancel]="false"></p-rating></div>
+        </div>
+      </p-panel>
+    </div>
+    <div class="ui-g-12 ui-g-nopad app-horizontal-spacer"></div>
+    <div class="ui-g-12 ui-g-nopad">
+      <p-panel header="How stressful was your day?">
+        <div class="ui-g">
+          <div class="ui-g-4 app-slider-label">Stress ({{ survey.stressLevel }})</div>
+          <div class="ui-g-8 app-rating-container"><p-slider [(ngModel)]="survey.stressLevel" [style]="{'width':'13em'}" [min]="0" [max]="5"></p-slider></div>
+        </div>
+      </p-panel>
+    </div>
+    <div class="ui-g-12 ui-g-nopad app-horizontal-spacer"></div>
+    <div class="ui-g-12 ui-g-nopad">
+      <p-panel header="How many total minutes of walking did you do?">
+        <div class="ui-g">
+          <div class="ui-g-4 app-slider-label">Walking ({{ survey.minutesWalking }})</div>
+          <div class="ui-g-8 app-rating-container"><p-slider [(ngModel)]="survey.minutesWalking" [style]="{'width':'13em'}" [min]="0" [max]="60"></p-slider></div>
+        </div>
+      </p-panel>
+    </div>
+    <div class="ui-g-12 ui-g-nopad app-horizontal-spacer"></div>
+    <div class="ui-g-12">
+      <p-dialog header="Lifestyle" [(visible)]="displayIncompleteDialog" modal="modal">Please complete all questions.</p-dialog>
+      <p-button label="Submit to Coach" (onClick)="submitQuestionnaire()"></p-button>
+    </div>
+  </div>
+  <div class="ui-g-12" style="color:green;" [hidden]="survey.status == 'open'">
+    <i class="fa fa-check-square-o"></i> DONE
+  </div>
+</div>

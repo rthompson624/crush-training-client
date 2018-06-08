@@ -1,0 +1,158 @@
+<div class="ui-g" style="margin-top:3.5em;margin-bottom:1em;">
+  <app-check-version></app-check-version>
+  <!-- Workouts -->
+  <div class="ui-g-12">
+    <h4 style="margin:0em">Workouts</h4>
+  </div>
+  <div class="ui-g-12 ui-g-nopad">
+    <div class="ui-g-3" style="padding-bottom:0em">Last 7 Days</div>
+    <div class="ui-g-3" style="text-align:center;padding-bottom:0em">Scheduled</div>
+    <div class="ui-g-3" style="text-align:center;padding-bottom:0em">Completed</div>
+    <div class="ui-g-3" style="text-align:center;padding-bottom:0em">Success</div>
+  </div>
+  <div *ngIf="sevenDaySummary" class="ui-g-12 ui-g-nopad">
+    <div class="ui-g-3">
+      <div class="ui-g app-chip-blue">In Person</div>
+    </div>
+    <div class="ui-g-3" style="text-align:center">{{ sevenDaySummary.inPersonScheduled }}</div>
+    <div class="ui-g-3" style="text-align:center">{{ sevenDaySummary.inPersonCompleted }}</div>
+    <div class="ui-g-3" style="text-align:center">{{ sevenDaySummary.inPersonSuccessRate }}</div>
+  </div>
+  <div *ngIf="sevenDaySummary" class="ui-g-12 ui-g-nopad">
+    <div class="ui-g-3">
+      <div class="ui-g app-chip-purple">Remote</div>
+    </div>
+    <div class="ui-g-3" style="text-align:center">{{ sevenDaySummary.remoteScheduled }}</div>
+    <div class="ui-g-3" style="text-align:center">{{ sevenDaySummary.remoteCompleted }}</div>
+    <div class="ui-g-3" style="text-align:center">{{ sevenDaySummary.remoteSuccessRate }}</div>
+  </div>
+  <div class="ui-g-12 ui-g-nopad">
+    <div class="ui-g-3" style="padding-bottom:0em">30 Days</div>
+    <div class="ui-g-3" style="text-align:center;padding-bottom:0em">Scheduled</div>
+    <div class="ui-g-3" style="text-align:center;padding-bottom:0em">Completed</div>
+    <div class="ui-g-3" style="text-align:center;padding-bottom:0em">Success</div>
+  </div>
+  <div *ngIf="thirtyDaySummary" class="ui-g-12 ui-g-nopad">
+    <div class="ui-g-3">
+      <div class="ui-g app-chip-blue">In Person</div>
+    </div>
+    <div class="ui-g-3" style="text-align:center">{{ thirtyDaySummary.inPersonScheduled }}</div>
+    <div class="ui-g-3" style="text-align:center">{{ thirtyDaySummary.inPersonCompleted }}</div>
+    <div class="ui-g-3" style="text-align:center">{{ thirtyDaySummary.inPersonSuccessRate }}</div>
+  </div>
+  <div *ngIf="thirtyDaySummary" class="ui-g-12 ui-g-nopad">
+    <div class="ui-g-3">
+      <div class="ui-g app-chip-purple">Remote</div>
+    </div>
+    <div class="ui-g-3" style="text-align:center">{{ thirtyDaySummary.remoteScheduled }}</div>
+    <div class="ui-g-3" style="text-align:center">{{ thirtyDaySummary.remoteCompleted }}</div>
+    <div class="ui-g-3" style="text-align:center">{{ thirtyDaySummary.remoteSuccessRate }}</div>
+  </div>
+  <div class="ui-g-12"><hr style="margin:0em"></div>
+  <!-- Lifestyle -->
+  <div class="ui-g-12">
+    <div class="ui-g" style="float:left;margin-top:0.3em">
+      <h4 style="margin:0em">Lifestyle</h4>
+    </div>
+    <div class="ui-g" style="float:left;padding-left:1em">
+      <p-calendar #lifestyleCalendar [(ngModel)]="lifestyleDateRange" (onClose)="onLifestyleDateRangeSelected()" selectionMode="range" readonlyInput="true" placeholder="Select date range..." showIcon="false" [inputStyle]="{'width':'13em'}"></p-calendar>
+    </div>
+  </div>
+  <div class="ui-g-12">
+    <p-chart type="line" [data]="lifestyleChartData" [options]="lifestyleChartOptions" responsive="true"></p-chart>
+  </div>
+  <!-- Legend -->
+  <div class="ui-g-12" style="padding-top:0em;padding-bottom:0em">
+    <div class="ui-g-1 ui-g-nopad" style="border-bottom:0.2em solid #00FF00;height:0.8em"></div>
+    <div class="ui-g-3 ui-g-nopad" style="padding-left:0.5em">Sleep</div>
+    <div class="ui-g-1 ui-g-nopad" style="border-bottom:0.2em solid #00FFFF;height:0.8em"></div>
+    <div class="ui-g-3 ui-g-nopad" style="padding-left:0.5em">Nutrition</div>
+    <div class="ui-g-1 ui-g-nopad" style="border-bottom:0.2em solid #0000FF;height:0.8em"></div>
+    <div class="ui-g-3 ui-g-nopad" style="padding-left:0.5em">Hydration</div>
+  </div>
+  <div class="ui-g-12" style="padding-top:0em">
+    <div class="ui-g-1 ui-g-nopad" style="border-bottom:0.2em solid #FF00FF;height:0.8em"></div>
+    <div class="ui-g-3 ui-g-nopad" style="padding-left:0.5em">Movement</div>
+    <div class="ui-g-1 ui-g-nopad" style="border-bottom:0.2em solid #FF0000;height:0.8em"></div>
+    <div class="ui-g-3 ui-g-nopad" style="padding-left:0.5em">Stress</div>
+    <div class="ui-g-1 ui-g-nopad" style="border-bottom:0.2em solid #006400;height:0.8em"></div>
+    <div class="ui-g-3 ui-g-nopad" style="padding-left:0.5em">Walking</div>
+  </div>
+  <div class="ui-g-12"><hr style="margin:0em"></div>
+  <!-- One-Rep Max -->
+  <div class="ui-g-12">
+    <h4 style="margin-top:0.3em;margin-bottom:0em">1-Rep Max</h4>
+  </div>
+  <div class="ui-g-12">
+    <p-autoComplete [(ngModel)]="movementSelection" (onSelect)="onMovementSelected()" [suggestions]="movementSuggestions" (completeMethod)="searchMovements($event)" field="name" [size]="30" [dropdown]="true" placeholder="Select movement..."></p-autoComplete>
+  </div>
+  <div class="ui-g-12">
+    <p-calendar #oneRepMaxCalendar [(ngModel)]="oneRepMaxDateRange" (onClose)="onOneRepMaxDateRangeSelected()" selectionMode="range" readonlyInput="true" placeholder="Select date range..." showIcon="true" [inputStyle]="{'width':'13em'}"></p-calendar>
+  </div>
+  <div class="ui-g-12">
+    <p-chart type="line" [data]="oneRepMaxChartData" [options]="oneRepMaxChartOptions" responsive="true"></p-chart>
+  </div>
+  <div class="ui-g-12"><hr style="margin:0em"></div>
+  <!-- Body Composition -->
+  <div class="ui-g-12">
+    <h4 style="margin-top:0.3em;margin-bottom:0em">Body Composition</h4>
+  </div>
+  <div class="ui-g-12">
+    <p-calendar #bodyCompCalendar [(ngModel)]="bodyCompDateRange" (onClose)="onBodyCompDateRangeSelected()" selectionMode="range" [hideOnDateTimeSelect]="true" readonlyInput="true" placeholder="Select date range..." showIcon=true [inputStyle]="{'width':'13em'}"></p-calendar>
+  </div>
+  <div class="ui-g-12">
+    <p-chart type="line" [data]="bodyCompChartData" [options]="bodyCompChartOptions" responsive="true"></p-chart>
+  </div>
+  <!-- Legend -->
+  <div class="ui-g-12" style="padding-top:0em;padding-bottom:0.5em">
+    <div class="ui-g-1 ui-g-nopad" style="border-bottom:0.2em solid #0000FF;height:0.8em"></div>
+    <div class="ui-g-3 ui-g-nopad" style="padding-left:0.5em">Weight</div>
+    <div class="ui-g-1 ui-g-nopad" style="border-bottom:0.2em solid #00FF00;height:0.8em"></div>
+    <div class="ui-g-3 ui-g-nopad" style="padding-left:0.5em">Body Fat</div>
+    <div class="ui-g-1 ui-g-nopad" style="border-bottom:0.2em solid #FF0000;height:0.8em"></div>
+    <div class="ui-g-3 ui-g-nopad" style="padding-left:0.5em">Waist</div>
+  </div>
+  <div class="ui-g-12"><hr style="margin:0em"></div>
+  <!-- Progress Pics -->
+  <div class="ui-g-12">
+    <h4 style="margin-top:0.3em;margin-bottom:0em">Progress Pics</h4>
+  </div>
+  <div class="ui-g-12" style="padding-top:0em">
+    <ng-container *ngIf="leftPicIndex != null">
+      <!-- Navigation -->
+      <div class="ui-g-6 ui-g-nopad">
+        <div class="ui-g-2 ui-g-nopad" style="text-align:right">
+          <a (click)="onClickLeftPicDecrement()"><i class="fa fa-caret-left fa-2x"></i></a>
+        </div>
+        <div class="ui-g-8 ui-g-nopad" style="text-align:center;margin-top:0.4em">
+          {{ formatPicDate(bodyCompMeasurements[leftPicIndex].date) }}
+        </div>
+        <div class="ui-g-2 ui-g-nopad">
+          <a (click)="onClickLeftPicIncrement()"><i class="fa fa-caret-right fa-2x"></i></a>
+        </div>
+      </div>
+      <div class="ui-g-6 ui-g-nopad">
+        <div class="ui-g-2 ui-g-nopad" style="text-align:right">
+          <a (click)="onClickRightPicDecrement()"><i class="fa fa-caret-left fa-2x"></i></a>
+        </div>
+        <div class="ui-g-8 ui-g-nopad" style="text-align:center;margin-top:0.4em">
+          {{ formatPicDate(bodyCompMeasurements[rightPicIndex].date) }}
+        </div>
+        <div class="ui-g-2 ui-g-nopad">
+          <a (click)="onClickRightPicIncrement()"><i class="fa fa-caret-right fa-2x"></i></a>
+        </div>
+      </div>
+      <!-- Pics -->
+      <div class="ui-g-6" *ngIf="leftPicIndex != null" style="padding-left:0em">
+        <div class="ui-g-12 ui-g-nopad" *ngIf="bodyCompMeasurements[leftPicIndex].picUrl | async; let url">
+          <img [src]="url" style="max-width:100%">
+        </div>
+      </div>
+      <div class="ui-g-6" *ngIf="rightPicIndex != null" style="padding-right:0em">
+        <div class="ui-g-12 ui-g-nopad" *ngIf="bodyCompMeasurements[rightPicIndex].picUrl | async; let url">
+          <img [src]="url" style="max-width:100%">
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</div>

@@ -1,0 +1,74 @@
+<div class="ui-g-12 ui-g-nopad" style="margin-top:4em;">
+  <div class="ui-g-12 ui-g-nopad">
+    <div class="ui-g-3"></div>
+    <div class="ui-g-9">
+      <img src="/assets/images/crush_logo.jpg" width="60%">
+    </div>
+  </div>
+  <div class="ui-g-12 ui-g-nopad">
+    <div class="ui-g-3"></div>
+    <div class="ui-g-9"><h4>Login</h4></div>
+  </div>
+  <ng-container *ngIf="!isUserLoggedIn()">
+    <form [formGroup]="userform" (ngSubmit)="onLogin()">
+      <div class="ui-g-12 ui-g-nopad">
+        <div class="ui-g-3 app-control-label">Email</div>
+        <div class="ui-g-9">
+          <input pInputText formControlName="email" (keyup)="resetSubmitError()">
+        </div>
+      </div>
+      <div class="ui-g-12 ui-g-nopad" *ngIf="!userform.controls['email'].valid && userform.controls['email'].dirty">
+        <div class="ui-g-3"></div>
+        <div class="ui-g-9">
+          <span class="ui-message ui-messages-error ui-corner-all">
+            <i class="fa fa-close"></i> Email is required
+          </span>
+        </div>
+      </div>
+      <div class="ui-g-12 ui-g-nopad">
+        <div class="ui-g-3 app-control-label">Password</div>
+        <div class="ui-g-9">
+          <input pInputText type="password" formControlName="password" (keyup)="resetSubmitError()">
+        </div>
+      </div>
+      <div class="ui-g-12 ui-g-nopad" *ngIf="!userform.controls['password'].valid && userform.controls['password'].dirty">
+        <div class="ui-g-3"></div>
+        <div class="ui-g-9">
+          <span class="ui-message ui-messages-error ui-corner-all">
+            <i class="fa fa-close"></i> Password is required
+          </span>
+        </div>
+      </div>
+      <div class="ui-g-12 ui-g-nopad">
+        <div class="ui-g-3"></div>
+        <div class="ui-g-9">
+          <p-button type="submit" label="Login" [disabled]="!userform.valid"></p-button>
+        </div>
+      </div>
+      <div class="ui-g-12 ui-g-nopad">
+        <div class="ui-g-3"></div>
+        <div class="ui-g-9">
+          <a (click)="onClickForgotPassword()">Forgot your password?</a>
+        </div>
+      </div>
+      <div [hidden]="!loginFailed" class="ui-g-12 ui-g-nopad">
+        <div class="ui-g-3"></div>
+        <div class="ui-g-9">
+          <span class="ui-message ui-messages-error ui-corner-all">
+            <i class="fa fa-close"></i> {{ loginFailedMessage }}
+          </span>
+        </div>
+      </div>
+    </form>
+    <p-dialog header="Reset Password" (onHide)="onDismissForgotPasswordDialog()" [(visible)]="displayForgotPasswordDialog" modal="modal" [responsive]="true">
+      <div class="ui-g-12" style="padding-left:0em">Enter your email address, and click Reset to receive an email with instructions for resetting your password.</div>
+      <div class="ui-g-12" style="padding-left:0em">
+        <input pInputText [(ngModel)]="forgottenPasswordEmail" (keyup)="validateEmail()">
+      </div>
+      <div *ngIf="emailSent" class="ui-g-12" style="color:indianred;padding-left:0em">An email has been sent. Please check your inbox.</div>
+      <p-footer>
+        <p-button type="button" [disabled]="disableResetButton" (click)="onClickResetPassword()" label="Reset"></p-button>
+      </p-footer>
+    </p-dialog>
+  </ng-container>
+</div>

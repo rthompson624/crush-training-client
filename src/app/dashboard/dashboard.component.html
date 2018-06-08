@@ -1,0 +1,127 @@
+<!-- Dashboard content -->
+<div class="ui-g-12 ui-g-nopad" style="margin-top:3em; margin-bottom:6.5em;">
+  <app-check-version></app-check-version>
+  <div class="ui-g-12">
+    <div class="ui-g-8 ui-g-nopad">
+      <h4>{{ formatDate(dateToday) }}</h4>
+    </div>
+    <div class="ui-g-4 ui-g-nopad" style="text-align:right">
+      <img src="/assets/images/crush_logo.jpg" style="height:2.25em">
+    </div>
+    <div class="ui-g-12 ui-g-nopad" style="padding-top:0.8em;padding-bottom:0.2em;">
+      <h4 style="margin:0em">Training</h4>
+    </div>
+    <div *ngIf="workouts.length == 0" class="ui-g-12 ui-g-nopad" style="padding-top:0.5em">No workouts scheduled today.</div>
+    <ng-container *ngFor="let workout of workouts">
+      <div class="ui-g-12 ui-g-nopad" *ngIf="workout.meetingType == 'inperson'" style="padding-top:0.5em">
+        <div *ngIf="workout.status == 'open'" class="ui-g app-chip-blue" style="margin-bottom:0.5em;float:left;">
+          <a (click)="onSelectWorkout(workout)">In Person</a>
+        </div>
+        <div *ngIf="workout.status == 'complete'" class="ui-g app-chip-blue" style="margin-bottom:0.5em;float:left;">
+          In Person
+        </div>
+        <div class="ui-g" style="padding-left:0.8em;float:left;">{{ formatTime(workout.assignmentDate) }}</div>
+        <div *ngIf="workout.status == 'complete'" class="ui-g" style="padding-left:0.8em;color:green;">
+          <i class="fa fa-check-square-o" style="margin-top:0.2em"></i> &nbsp;DONE
+        </div>
+      </div>
+      <div class="ui-g-12 ui-g-nopad" *ngIf="workout.meetingType == 'remote'" style="padding-top:0.5em">
+        <div *ngIf="workout.status == 'open'" class="ui-g app-chip-purple" style="margin-bottom:0.5em;float:left;">
+          <a (click)="onSelectWorkout(workout)">Remote</a>
+        </div>
+        <div *ngIf="workout.status == 'complete'" class="ui-g app-chip-purple" style="margin-bottom:0.5em;float:left;">
+          Remote
+        </div>
+        <div *ngIf="workout.status == 'complete'" class="ui-g" style="padding-left:0.8em;color:green;">
+          <i class="fa fa-check-square-o" style="margin-top:0.3em"></i> &nbsp;DONE
+        </div>
+      </div>
+      <ng-container *ngIf="workout.status == 'open'">
+        <ng-container *ngFor="let segment of workout.segments; let segmentIndex = index">
+          <ng-container *ngIf="segmentIndex < 1">
+            <ng-container *ngIf="segment.type == 'singleset' || segment.type == 'superset'">
+              <ng-container *ngFor="let exercise of segment.exercises; let exerciseIndex = index">
+                <div class="ui-g-12 ui-g-nopad" *ngIf="exerciseIndex < 2">
+                  <ng-container *ngIf="segment.type == 'superset'">
+                    {{ segment.order }}{{ exercise.order }}) {{ exercise.movement }} {{ exercise.sets }} x {{ exercise.reps }}
+                  </ng-container>
+                  <ng-container *ngIf="segment.type == 'singleset'">
+                    {{ segment.order }}) {{ exercise.movement }} {{ exercise.sets }} x {{ exercise.reps }}
+                  </ng-container>
+                </div>
+              </ng-container>
+            </ng-container>
+            <ng-container *ngIf="segment.type == 'circuit'">
+              <div class="ui-g-12 ui-g-nopad">
+                {{ segment.order }}) {{ segment.circuitName }}
+              </div>
+            </ng-container>
+          </ng-container>
+        </ng-container>
+        <div class="ui-g-12 ui-g-nopad" style="padding-top:0em;">
+          <a (click)="onSelectWorkout(workout)">... view full workout</a>
+        </div>
+      </ng-container>
+    </ng-container>
+    <ng-container *ngFor="let workoutYesterday of workoutsYesterday | async">
+      <div *ngIf="workoutYesterday.status == 'open'" class="ui-g-12 ui-g-nopad" style="padding-top:0.5em">
+        <i class="fa fa-exclamation fa-lg" style="color: red;"></i> You missed a <a routerLink="/workouts/{{workoutYesterday.id}}">workout yesterday</a>
+      </div>
+    </ng-container>
+    <div class="ui-g-12 ui-g-nopad app-horizontal-rule"></div>
+    <div class="ui-g-12 ui-g-nopad" style="padding-top:0.5em;">
+      <h4>Lifestyle</h4>
+    </div>
+    <ng-container *ngIf="survey">
+      <ng-container *ngIf="survey.status == 'open'">
+        <div class="ui-g-12 ui-g-nopad">
+          <a routerLink="/lifestyle"><i class="fa fa-pencil fa-lg"></i> &nbsp;Open today's survey</a>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="survey.status == 'complete'">
+        <div class="ui-g-12 ui-g-nopad" style="color:green;"><i class="fa fa-check-square-o"></i> DONE</div>
+      </ng-container>
+    </ng-container>
+    <div *ngIf="!surveyCompletedYesterday" class="ui-g-12 ui-g-nopad" style="padding-top:0.5em">
+      <i class="fa fa-exclamation fa-lg" style="color: red;"></i> &nbsp;You did not complete yesterday's survey.
+    </div>
+    <ng-container *ngIf="tipOfTheDay">
+      <div class="ui-g-12 ui-g-nopad app-horizontal-rule"></div>
+      <div class="ui-g-12 ui-g-nopad" style="padding-top:0.5em">
+        <h4>Tip of the Day</h4>
+      </div>
+      <div class="ui-g-12 ui-g-nopad" [innerHTML]="formatMultiline(tipOfTheDay.tipText)">
+      </div>
+    </ng-container>
+    <ng-container *ngIf="user">
+      <div *ngIf="!hasCompletedIntake || !user.hasProfilePic || bodyCompNotification" class="ui-g-12 ui-g-nopad app-horizontal-rule"></div>
+      <div *ngIf="!hasCompletedIntake" class="ui-g-12 ui-g-nopad" style="padding-top:0.8em;">
+        <span class="app-chip-notify">1</span> &nbsp;{{ user.nameFirst }}, please complete your <a routerLink="/intake">Intake Questionnaire</a>.
+      </div>
+      <div *ngIf="!user.hasProfilePic && hasCompletedIntake" class="ui-g-12 ui-g-nopad" style="padding-top:0.8em;">
+        <span class="app-chip-notify">1</span> &nbsp;{{ user.nameFirst }}, please <a routerLink="/profile">upload</a> a profile pic.
+      </div>
+      <div *ngIf="bodyCompNotification" class="ui-g-12 ui-g-nopad" style="padding-top:0.8em;">
+        <span class="app-chip-notify">1</span> &nbsp;{{ user.nameFirst }}, please complete this week's <a routerLink="/body-comp">Body Comp</a>.
+      </div>
+    </ng-container>
+  </div>
+  <!-- Dashboard footer navigation -->
+  <div class="ui-g-12 ui-g-nopad app-dashboard-footer">
+    <div class="ui-g-3 text-center">
+      <a (click)="onSelectTraining()"><i class="fa fa-calendar fa-3x"></i></a><br>
+      <span *ngIf="uncompletedWorkouts() > 0" class="app-chip-notify">{{ uncompletedWorkouts() }}</span>
+    </div>
+    <div class="ui-g-3 text-center">
+      <a routerLink="/lifestyle"><i class="fa fa-heartbeat fa-3x"></i></a><br>
+      <span *ngIf="survey ? survey.status == 'open' : false" class="app-chip-notify">1</span>
+    </div>
+    <div class="ui-g-3 text-center">
+      <a routerLink="/progress"><i class="fa fa-bar-chart fa-3x"></i></a><br>
+    </div>
+    <div class="ui-g-3 text-center">
+      <a routerLink="/messages"><i class="fa fa-comments fa-3x"></i></a><br>
+      <span *ngIf="unreadMessageCount > 0" class="app-chip-notify">{{ unreadMessageCount }}</span>
+    </div>
+  </div>
+</div>

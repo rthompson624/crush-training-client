@@ -1,0 +1,64 @@
+<!-- Profile Edit Page -->
+<div class="ui-g" style="margin-top:3em;margin-bottom:2em;">
+  <app-check-version></app-check-version>
+  <div class="ui-g-12"><h4 style="margin:0em">Edit Profile</h4></div>
+  <div class="ui-g-6 ui-g-nopad">
+    <div class="ui-g-12 app-control-label">First Name</div>
+    <div class="ui-g-12">
+      <input pInputText [(ngModel)]="user.nameFirst" style="width:100%">
+    </div>
+  </div>
+  <div class="ui-g-6 ui-g-nopad">
+    <div class="ui-g-12 app-control-label">Last Name</div>
+    <div class="ui-g-12">
+      <input pInputText [(ngModel)]="user.nameLast" style="width:100%">
+    </div>
+  </div>
+  <div class="ui-g-6 ui-g-nopad">
+    <div class="ui-g-12 app-control-label">Phone Number</div>
+    <div class="ui-g-12">
+      <p-inputMask [(ngModel)]="user.phone" mask="(999) 999-9999" size="18"></p-inputMask>
+    </div>
+  </div>
+  <div class="ui-g-6 ui-g-nopad">
+    <div class="ui-g-12 app-control-label">Email</div>
+    <div class="ui-g-12">
+      <input pInputText [(ngModel)]="user.email" style="width:100%">
+    </div>
+  </div>
+  <div class="ui-g-6 ui-g-nopad">
+    <div class="ui-g-12 app-control-label">City</div>
+    <div class="ui-g-12">
+      <input pInputText [(ngModel)]="user.city" style="width:100%">
+    </div>
+  </div>
+  <div class="ui-g-6 ui-g-nopad">
+    <div class="ui-g-12 app-control-label">State</div>
+    <div class="ui-g-12">
+      <p-dropdown [options]="stateOptions" [(ngModel)]="user.state"></p-dropdown>
+    </div>
+  </div>
+  <div class="ui-g-12 app-control-label">Country</div>
+  <div class="ui-g-12">
+    <p-dropdown [options]="countryOptions" [(ngModel)]="user.country"></p-dropdown>
+  </div>
+  <div class="ui-g-12 app-control-label">My Goal</div>
+  <div class="ui-g-12">
+    <textarea pInputTextarea rows="2" style="width:100%;" [(ngModel)]="user.outcome"></textarea>
+  </div>
+  <div class="ui-g-12 app-control-label">My Why</div>
+  <div class="ui-g-12">
+    <textarea pInputTextarea rows="3" style="width:100%;" [(ngModel)]="user.outcomeReason"></textarea>
+  </div>
+  <p-dialog header="Save Error" [(visible)]="displayInvalidFormDialog" (onHide)="displayInvalidFormDialog = false;" modal="modal">
+    <div class="ui-g-12 ui-g-nopad" style="padding-bottom:0.5em;">
+      Profile changes could not be saved due to the following error(s):
+    </div>
+    <div *ngFor="let issue of formIssues" class="ui-g-12 ui-g-nopad">
+      {{ issue }}
+    </div>
+  </p-dialog>
+  <div class="ui-g-12">
+    <p-button label="Save" (click)="onSaveClick()"></p-button>
+  </div>
+</div>

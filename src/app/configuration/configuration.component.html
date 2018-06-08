@@ -1,0 +1,46 @@
+<div class="ui-g" style="margin-top:3.5em;">
+  <app-check-version></app-check-version>
+  <div class="ui-g-12">
+    <h4 style="margin:0em">Configuration</h4>
+  </div>
+  <div class="ui-g-12">
+    <div class="ui-g" style="width:3em;display:block;text-align:center;float:left;">
+      <a routerLink="/movement"><i class="fa fa-child fa-2x"></i></a>
+    </div>
+    <div class="ui-g" style="padding-left:0.7em;font-size:1.1em;padding-top:0.2em">
+      <a routerLink="/movement">Movement Library</a>
+    </div>
+  </div>
+  <div class="ui-g-12">
+    <div class="ui-g" style="width:3em;display:block;text-align:center;float:left;">
+      <a routerLink="/tip"><i class="fa fa-graduation-cap fa-2x"></i></a>
+    </div>
+    <div class="ui-g" style="padding-left:0.7em;font-size:1.1em;padding-top:0.2em">
+      <a routerLink="/tip">Tip Library</a>
+    </div>
+  </div>
+  <div class="ui-g-12" *ngIf="trainerSubscription">
+    <div class="ui-g" style="width:3em;display:block;text-align:center;float:left;">
+      <a routerLink="/subscription-edit"><i class="fa fa-user-plus fa-2x"></i></a>
+    </div>
+    <div class="ui-g" style="padding-left:0.7em;font-size:1.1em;padding-top:0.2em">
+      <a routerLink="/subscription-edit">Subscription</a>
+    </div>
+  </div>
+  <div class="ui-g-12" *ngIf="!trainerSubscription">
+    <div class="ui-g" style="width:3em;display:block;text-align:center;float:left;">
+      <a routerLink="/payment"><i class="fa fa-user-plus fa-2x"></i></a>
+    </div>
+    <div class="ui-g" style="padding-left:0.7em;font-size:1.1em;padding-top:0.2em">
+      <a routerLink="/payment">Subscription</a>
+    </div>
+  </div>
+  <div class="ui-g-12">
+    <div class="ui-g" style="width:3em;display:block;text-align:center;float:left;">
+      <a href="mailto:support@crush-training.com"><i class="fa fa-envelope fa-2x"></i></a>
+    </div>
+    <div class="ui-g" style="padding-left:0.7em;font-size:1.1em;padding-top:0.2em">
+      <a href="mailto:support@crush-training.com">Email Support</a>
+    </div>
+  </div>
+</div>

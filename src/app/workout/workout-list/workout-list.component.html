@@ -1,0 +1,73 @@
+<!-- List the day's workouts -->
+<div class="ui-g-12 ui-g-nopad" style="margin-top:3em;">
+  <div class="ui-g-12">
+    <div class="ui-g-2" style="text-align:right;margin-top:0.35em;">
+      <a (click)="onGoToPreviousDay()"><i class="fa fa-caret-left fa-2x"></i></a>
+    </div>
+    <div class="ui-g-8" style="text-align:center;">
+      <h4>{{ formatDate(activeDate) }}</h4>
+    </div>
+    <div class="ui-g-2" style="margin-top:0.35em;">
+      <a (click)="onGoToNextDay()"><i class="fa fa-caret-right fa-2x"></i></a>
+    </div>
+  </div>
+  <div class="ui-g-12">
+    <h4 style="margin:0em;">Training</h4>
+  </div>
+  <div class="ui-g-12">
+    <p *ngIf="!workout">No workout scheduled</p>
+    <p-panel header="Workout" *ngIf="workout">
+      <div class="ui-g">
+        <ng-container *ngIf="workout.status == 'open'">
+          <div class="ui-g-12 ui-g-nopad" *ngIf="workout.meetingType == 'inperson'">
+            <div class="ui-g app-chip-blue" style="margin-bottom:0.5em;float:left;">
+              In Person
+            </div>
+            <div class="ui-g" style="padding-left:0.5em;">@ {{ formatTime(workout.assignmentDate) }}</div>
+          </div>
+          <div class="ui-g app-chip-purple" style="margin-bottom:0.5em;margin-top:0.5em;" *ngIf="workout.meetingType == 'remote'">
+            Remote
+          </div>
+        </ng-container>
+        <div class="ui-g-12 ui-g-nopad" style="padding-bottom:0.5em;padding-top:0.5em;" *ngIf="workout.status == 'open'"><a (click)="onSelectWorkout()" style="color: #337ab7">Hit it &nbsp;<i class="fa fa-play"></i></a></div>
+        <div class="ui-g-12 ui-g-nopad" style="color:green;padding-bottom:0.5em;" *ngIf="workout.status == 'complete'"><i class="fa fa-check-square-o"></i> DONE</div>
+        <ng-container *ngFor="let segment of workout.segments">
+          <ng-container *ngIf="segment.type == 'singleset' || segment.type == 'superset'">
+            <ng-container *ngFor="let exercise of segment.exercises">
+              <ng-container *ngIf="segment.type == 'superset'">
+                <div class="ui-g-12 ui-g-nopad">
+                  <div class="ui-g-8 ui-g-nopad">{{ segment.order }}{{ exercise.order }}) {{ exercise.movement }}</div>
+                  <ng-container *ngIf="workout.status == 'open'">
+                    <div class="ui-g-4 ui-g-nopad" style="text-align:right;">{{ exercise.sets }} x {{ exercise.reps }}</div>
+                  </ng-container>
+                  <ng-container *ngIf="workout.status == 'complete'">
+                    <div class="ui-g-4 ui-g-nopad" style="text-align:right;">{{ exercise.sets }} x {{ exercise.reps }} @ {{ exercise.weight }}#</div>
+                  </ng-container>
+                </div>
+              </ng-container>
+              <ng-container *ngIf="segment.type == 'singleset'">
+                <div class="ui-g-12 ui-g-nopad">
+                  <div class="ui-g-8 ui-g-nopad">{{ segment.order }}) {{ exercise.movement }}</div>
+                  <ng-container *ngIf="workout.status == 'open'">
+                    <div class="ui-g-4 ui-g-nopad" style="text-align:right;">{{ exercise.sets }} x {{ exercise.reps }}</div>
+                  </ng-container>
+                  <ng-container *ngIf="workout.status == 'complete'">
+                    <div class="ui-g-4 ui-g-nopad" style="text-align:right;">{{ exercise.sets }} x {{ exercise.reps }} @ {{ exercise.weight }}#</div>
+                  </ng-container>
+                </div>
+              </ng-container>
+            </ng-container>
+          </ng-container>
+          <ng-container *ngIf="segment.type == 'circuit'">
+            <div class="ui-g-12 ui-g-nopad">
+              <div class="ui-g-8 ui-g-nopad">{{ segment.order }}) {{ segment.circuitName }}</div>
+              <div class="ui-g-4 ui-g-nopad" style="text-align:right;">{{ segment.circuitResult }}</div>
+            </div>
+            <div class="ui-g-12 ui-g-nopad" style="margin-left:2em;" [innerHTML]="formatMultiline(segment.circuitDescription)"></div>
+          </ng-container>
+          <div class="ui-g-12 ui-g-nopad app-horizontal-spacer"></div>
+        </ng-container>
+      </div>
+    </p-panel>
+  </div>
+</div>

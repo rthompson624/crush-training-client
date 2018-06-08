@@ -1,0 +1,23 @@
+.ui-rating a {
+  color: darkcyan;
+  font-size: 1.5em;
+  padding-right: 0.8em;
+}
+
+.app-rating-label {
+  font-size: 1.1em;
+  font-weight: 500;
+  text-align: right;
+  line-height: 1.8em;
+}
+
+.app-rating-container {
+  padding-left: 1.5em;
+}
+
+.app-slider-label {
+  font-size: 1.1em;
+  font-weight: 500;
+  text-align: right;
+  padding-top: 0.2em;
+}

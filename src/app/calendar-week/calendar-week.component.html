@@ -1,0 +1,198 @@
+<div class="ui-g" style="margin-top:3em;margin-bottom:2em;">
+  <app-check-version></app-check-version>
+  <div *ngIf="isTrainer" class="ui-g-12" style="text-align:center;padding-top:1em;padding-bottom:0em;">
+    <p-dropdown [options]="clientSelectItems" [(ngModel)]="selectedClientID" [style]="{'width':'12em', 'font-size':'1.2em'}" (onChange)="changeClients()"></p-dropdown>
+  </div>
+  <!-- Navigation -->
+  <div class="ui-g-12" style="padding-bottom:0em;">
+    <div class="ui-g-2 ui-g-nopad" style="text-align:right;">
+      <a (click)="onGoToPreviousWeek()"><i class="fa fa-caret-left fa-2x"></i></a>
+    </div>
+    <div class="ui-g-8 ui-g-nopad" style="text-align:center;margin-top:0.35em;">
+      <h4 style="margin: 0em">{{ getWeekText() }}</h4>
+    </div>
+    <div class="ui-g-2 ui-g-nopad">
+      <a (click)="onGoToNextWeek()"><i class="fa fa-caret-right fa-2x"></i></a>
+    </div>
+  </div>
+  <!-- Dialog Boxes -->
+  <p-dialog header="Delete Confirmation" [(visible)]="displayDeleteDialog" modal="modal" closable="false">
+    Do you want to delete this workout?
+    <p-footer>
+      <button type="button" pButton icon="fa-check" (click)="onDeleteWorkoutConfirmed()" label="Yes"></button>
+      <button type="button" pButton icon="fa-close" (click)="displayDeleteDialog = false" label="No"></button>
+    </p-footer>
+  </p-dialog>
+  <p-dialog header="Replace or Append" [(visible)]="displayCopyAppendOrReplaceDialog" modal="modal" closable="false">
+    Replace contents of clipboard with selected workouts, or append them to clipboard?
+    <p-footer>
+      <button type="button" pButton (click)="displayCopyAppendOrReplaceDialog = false;copyWorkouts(true)" label="Replace"></button>
+      <button type="button" pButton (click)="displayCopyAppendOrReplaceDialog = false;copyWorkouts(false)" label="Append"></button>
+    </p-footer>
+  </p-dialog>
+  <p-dialog header="Copy Confirmation" [(visible)]="displayCopyDialog" modal="modal" closable="false">
+    Workout(s) copied to clipboard.
+    <p-footer>
+      <button type="button" pButton icon="fa-check" (click)="displayCopyDialog = false" label="OK"></button>
+    </p-footer>
+  </p-dialog>
+  <p-dialog header="Paste Error" [(visible)]="displayPasteErrorDialog" modal="modal" closable="false">
+    <i class="fa fa-exclamation-triangle" style="margin-top:0.25em;color:red;"></i> &nbsp;Currently no workout(s) copied to the clipboard.
+    <p-footer>
+      <button type="button" pButton icon="fa-check" (click)="displayPasteErrorDialog = false" label="OK"></button>
+    </p-footer>
+  </p-dialog>
+  <p-dialog header="Select Client" [(visible)]="displayClientSelectDialog" modal="modal" [contentStyle]="{'overflow':'visible'}">
+    <div class="ui-g-12">
+      <p-dropdown [options]="clientDialogSelectItems" placeholder="" [(ngModel)]="selectedDialogClientID" [style]="{'width':'12em', 'font-size':'1.2em'}"></p-dropdown>
+    </div>
+    <p-footer>
+      <button type="button" pButton icon="fa-check" (click)="onSelectClientDialog()" label="OK"></button>
+    </p-footer>
+  </p-dialog>
+  <ng-container *ngIf="user && clients">
+    <p-dialog header="Subscription Expired" [visible]="displaySubscriptionExpiredDialog" (onHide)="displaySubscriptionExpiredDialog = false" modal="modal" [responsive]="true">
+      Please subscribe to regain full use of all application features.
+    </p-dialog>
+    <p-dialog header="Plan Limit Exceeded" [visible]="displayExceededClientLimitDialog" (onHide)="displayExceededClientLimitDialog = false" modal="modal" [responsive]="true">
+      You currently have {{ getActiveClientCount() }} active clients which exceeds the {{ user.plan }} plan limit of {{ getPlanClientLimit(user.plan) }}. You can either upgrade to a higher plan, or set some clients to inactive to regain full use of all application features.
+    </p-dialog>
+  </ng-container>
+  <!-- Day of Week -->
+  <ng-container *ngFor="let day of daysOfWeek">
+    <div class="ui-g-12">
+      <div class="ui-g" style="float:left;">
+        <h4 style="margin:0em;">{{ formatLongDate(day) }}</h4>
+      </div>
+      <div *ngIf="day.getTime() == today.getTime()" class="ui-g" style="float:left;padding-left:0.5em;color:orange;">
+        <div class="ui-g" style="padding-left:0.5em;">
+          <i class="fa fa-sun-o fa-lg" style="margin-top:0.1em"></i>
+        </div>
+        <div class="ui-g" style="padding-left:0.5em;"><h4 style="margin:0em;">Today</h4></div>
+      </div>
+    </div>
+    <!-- Workout Creation -->
+    <div *ngIf="isTrainer" class="ui-g-12" style="padding-top:0em;">
+      <div class="ui-g" style="float:left;">
+        <a (click)="onNewWorkout(day)" style="color:#337AB7;"><i class="fa fa-plus" style="margin-top:0.25em;"></i> &nbsp;New</a>
+      </div>
+      <div class="ui-g" style="float:left;padding-left:1.5em;">
+        <a (click)="onPasteWorkouts(day)" style="color:#337AB7;"><i class="fa fa-clipboard" style="margin-top:0.25em;"></i> &nbsp;Paste</a>
+      </div>
+    </div>
+    <!-- Workout Programming Reminders -->
+    <ng-container *ngIf="isTrainer">
+      <ng-container *ngFor="let schedule of programmingNeededFor(day)">
+        <div *ngIf="schedule.meetingType == 'inperson'" class="ui-g-12" style="padding-top:0em;padding-bottom:0em;">
+          <div class="ui-g app-chip-blue-inverse" style="margin-bottom:0.5em;float:left;">
+            <a (click)="onNewWorkoutFromReminder(schedule)">In Person</a>
+          </div>
+          <div class="ui-g" style="padding-left:0.5em;float:left;">
+            {{ formatTime(schedule.displayTime) }}
+          </div>
+          <div *ngIf="showAllClients" class="ui-g" style="padding-left:0.3em;float:left;">
+            - {{ getClient(schedule.userID).nameFirst }} {{ getClient(schedule.userID).nameLast }}
+          </div>
+        </div>
+        <div *ngIf="schedule.meetingType == 'remote'" class="ui-g-12" style="padding-top:0em;padding-bottom:0em;">
+          <div class="ui-g app-chip-purple-inverse" style="margin-bottom:0.5em;float:left;">
+            <a (click)="onNewWorkoutFromReminder(schedule)">Remote</a>
+          </div>
+          <div *ngIf="showAllClients" class="ui-g" style="padding-left:0.5em;float:left;">
+            {{ getClient(schedule.userID).nameFirst }} {{ getClient(schedule.userID).nameLast }}
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
+    <!-- Workout -->
+    <div class="ui-g-12" style="padding-top:0em;" *ngFor="let workout of workoutsFor(day)">
+      <p-panel>
+        <p-header>
+          <div class="ui-g-12 ui-g-nopad">
+            <div class="ui-g" style="float:left;font-weight:500;font-size:1.14em;">
+              Workout
+            </div>
+            <ng-container *ngIf="isTrainer">
+              <div class="ui-g" *ngIf="workout.status == 'open'" style="float:left;padding-left:1em">
+                <a (click)="onEditWorkout(workout)" style="color:#337AB7;"><i class="fa fa-pencil" style="margin-top:0.25em;"></i> &nbsp;Edit</a>
+              </div>
+              <div class="ui-g" style="float:left;padding-left:1.25em">
+                <p-checkbox [(ngModel)]="workout.selected" binary="true" (onChange)="onSelectWorkout($event)"></p-checkbox>
+              </div>
+              <div class="ui-g" style="float:left;padding-left:0.25em">
+                 Select For Copy
+              </div>
+              <div class="ui-g" style="float:right">
+                <a (click)="onDeleteWorkout(workout)" style="color:#337AB7;"><i class="fa fa-trash-o" style="margin-top:0.25em;"></i> &nbsp;Delete</a>
+              </div>
+            </ng-container>
+          </div>
+        </p-header>
+        <div class="ui-g">
+          <div *ngIf="showAllClients" class="ui-g-12 ui-g-nopad" style="padding-bottom:0.5em">{{ workout.userName }}</div>
+          <div class="ui-g-12 ui-g-nopad">
+            <div class="ui-g app-chip-blue" style="margin-bottom:0.5em;float:left;" *ngIf="workout.meetingType == 'inperson'">
+              <a *ngIf="workout.status == 'open'" (click)="onStartWorkout(workout)">In Person</a>
+              <span *ngIf="workout.status == 'complete'">In Person</span>
+            </div>
+            <div class="ui-g" style="padding-left:0.5em;float:left;" *ngIf="workout.meetingType == 'inperson'">
+              {{ formatTime(workout.assignmentDate) }}
+            </div>
+            <div class="ui-g app-chip-purple" style="margin-bottom:0.5em;" *ngIf="workout.meetingType == 'remote'">
+              <a *ngIf="workout.status == 'open'" (click)="onStartWorkout(workout)">Remote</a>
+              <span *ngIf="workout.status == 'complete'">Remote</span>
+            </div>
+            <div class="ui-g" style="color:green;padding-bottom:0.5em;float:right;" *ngIf="workout.status == 'complete'">
+              <i class="fa fa-check-square-o" style="margin-top:0.25em;"></i> &nbsp;DONE
+            </div>
+            <div class="ui-g" style="color:red;padding-bottom:0.5em;float:right;" *ngIf="workoutOverdue(workout)">
+              <i class="fa fa-exclamation" style="margin-top:0.25em;"></i> &nbsp;OPEN
+            </div>
+          </div>
+          <ng-container *ngFor="let segment of workout.segments">
+            <ng-container *ngIf="segment.type == 'singleset' || segment.type == 'superset'">
+              <ng-container *ngFor="let exercise of segment.exercises">
+                <ng-container *ngIf="segment.type == 'superset'">
+                  <div class="ui-g-12 ui-g-nopad">
+                    <div class="ui-g-8 ui-g-nopad">{{ segment.order }}{{ exercise.order }}) {{ exercise.movement }}</div>
+                    <ng-container *ngIf="workout.status == 'open'">
+                      <div class="ui-g-4 ui-g-nopad" style="text-align:right;">{{ exercise.sets }} x {{ exercise.reps }}</div>
+                    </ng-container>
+                    <ng-container *ngIf="workout.status == 'complete'">
+                      <div class="ui-g-4 ui-g-nopad" style="text-align:right;">{{ exercise.sets }} x {{ exercise.reps }} @ {{ exercise.weight }}#</div>
+                    </ng-container>
+                  </div>
+                </ng-container>
+                <ng-container *ngIf="segment.type == 'singleset'">
+                  <div class="ui-g-12 ui-g-nopad">
+                    <div class="ui-g-8 ui-g-nopad">{{ segment.order }}) {{ exercise.movement }}</div>
+                    <ng-container *ngIf="workout.status == 'open'">
+                      <div class="ui-g-4 ui-g-nopad" style="text-align:right;">{{ exercise.sets }} x {{ exercise.reps }}</div>
+                    </ng-container>
+                    <ng-container *ngIf="workout.status == 'complete'">
+                      <div class="ui-g-4 ui-g-nopad" style="text-align:right;">{{ exercise.sets }} x {{ exercise.reps }} @ {{ exercise.weight }}#</div>
+                    </ng-container>
+                  </div>
+                </ng-container>
+              </ng-container>
+            </ng-container>
+            <ng-container *ngIf="segment.type == 'circuit'">
+              <div class="ui-g-12 ui-g-nopad">
+                <div class="ui-g-8 ui-g-nopad">{{ segment.order }}) {{ segment.circuitName }}</div>
+                <div class="ui-g-4 ui-g-nopad" style="text-align:right;">{{ segment.circuitResult }}</div>
+              </div>
+              <div class="ui-g-12 ui-g-nopad" style="margin-left:2em;" [innerHTML]="formatMultiline(segment.circuitDescription)"></div>
+            </ng-container>
+          </ng-container>
+        </div>
+      </p-panel>
+    </div>
+    <!-- No Workouts -->
+    <div class="ui-g-12" style="padding-top:0em;" *ngIf="workoutsFor(day).length == 0">
+      No workouts scheduled.
+    </div>
+  </ng-container>
+  <div *ngIf="isTrainer" class="ui-g-12" style="padding-top:1em">
+    <p-button (onClick)="onSelectCopyWorkouts()" icon="fa fa-fw fa-files-o" [disabled]="workoutsSelected == 0" label="Copy Selected Workouts"></p-button>
+  </div>
+</div>

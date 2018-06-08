@@ -1,0 +1,104 @@
+<div class="ui-g" style="margin-top:3em;margin-bottom:2em;">
+  <app-check-version></app-check-version>
+  <ng-container *ngFor="let intake of intakes | async">
+    <div class="ui-g-12"><h4 style="margin:0em">Intake Form - {{ subjectUser.nameFirst }} {{ subjectUser.nameLast }}</h4></div>
+    <div class="ui-g-6 ui-g-nopad">
+      <div class="ui-g-12 app-control-label">Location</div>
+      <div *ngIf="intake.country == 'United States'" class="ui-g-12">
+        {{intake.city}}, {{intake.state}}
+      </div>
+      <div *ngIf="intake.country != 'United States'" class="ui-g-12">
+        {{intake.city}}, {{intake.country}}
+      </div>
+    </div>
+    <div class="ui-g-6 ui-g-nopad">
+      <div class="ui-g-12 app-control-label">Phone</div>
+      <div class="ui-g-12">{{intake.phone}}</div>
+    </div>
+    <div class="ui-g-3 ui-g-nopad">
+      <div class="ui-g-12 app-control-label">Age</div>
+      <div class="ui-g-12">{{getAge(intake.birthday)}}</div>
+    </div>
+    <div class="ui-g-3 ui-g-nopad">
+      <div class="ui-g-12 app-control-label">Sex</div>
+      <div class="ui-g-12">{{intake.gender}}</div>
+    </div>
+    <div class="ui-g-3 ui-g-nopad">
+      <div class="ui-g-12 app-control-label">Height</div>
+      <div class="ui-g-12">{{getFeetAndInches(intake.height)}}</div>
+    </div>
+    <div class="ui-g-3 ui-g-nopad">
+      <div class="ui-g-12 app-control-label">Weight</div>
+      <div class="ui-g-12">{{intake.weight}}</div>
+    </div>
+    <div class="ui-g-12 ui-g-nopad">
+      <div class="ui-g-12 app-control-label">Profession</div>
+      <div class="ui-g-12">{{intake.profession}}</div>
+    </div>
+    <div class="ui-g-12 ui-g-nopad">
+      <div class="ui-g-12 app-control-label">Outcome Client Seeks (Their Goal)</div>
+      <div class="ui-g-12" [innerHtml]="formatMultiline(intake.outcome)"></div>
+    </div>
+    <div class="ui-g-12 ui-g-nopad">
+      <div class="ui-g-12 app-control-label">Client's Reason (Their Why)</div>
+      <div class="ui-g-12" [innerHtml]="formatMultiline(intake.outcomeReason)"></div>
+    </div>
+    <div class="ui-g-6 ui-g-nopad">
+      <div class="ui-g-12 app-control-label">Medical Conditions?</div>
+      <div class="ui-g-12">{{intake.medical}}</div>
+    </div>
+    <div class="ui-g-6 ui-g-nopad">
+      <div class="ui-g-12 app-control-label">Description</div>
+      <div class="ui-g-12" [innerHtml]="formatMultiline(intake.medicalDesc)"></div>
+    </div>
+    <div class="ui-g-6 ui-g-nopad">
+      <div class="ui-g-12 app-control-label">Any Injuries?</div>
+      <div class="ui-g-12">{{intake.injury}}</div>
+    </div>
+    <div class="ui-g-6 ui-g-nopad">
+      <div class="ui-g-12 app-control-label">Description</div>
+      <div class="ui-g-12" [innerHtml]="formatMultiline(intake.injuryDesc)"></div>
+    </div>
+    <div class="ui-g-3 ui-g-nopad">
+      <div class="ui-g-12 app-control-label">Stress</div>
+      <div class="ui-g-12">{{intake.stressLevel}}</div>
+    </div>
+    <div class="ui-g-3 ui-g-nopad">
+      <div class="ui-g-12 app-control-label">Sleep (hr)</div>
+      <div class="ui-g-12">{{intake.hoursSleep}}</div>
+    </div>
+    <div class="ui-g-3 ui-g-nopad">
+      <div class="ui-g-12 app-control-label">Walk (min)</div>
+      <div class="ui-g-12">{{intake.minutesWalk}}</div>
+    </div>
+    <div class="ui-g-3 ui-g-nopad">
+      <div class="ui-g-12 app-control-label">Water (oz)</div>
+      <div class="ui-g-12">{{intake.water}}</div>
+    </div>
+    <div class="ui-g-6 ui-g-nopad">
+      <div class="ui-g-12 app-control-label">Breakfast</div>
+      <div class="ui-g-12" [innerHtml]="formatMultiline(intake.breakfast)"></div>
+    </div>
+    <div class="ui-g-6 ui-g-nopad">
+      <div class="ui-g-12 app-control-label">Lunch</div>
+      <div class="ui-g-12" [innerHtml]="formatMultiline(intake.lunch)"></div>
+    </div>
+    <div class="ui-g-6 ui-g-nopad">
+      <div class="ui-g-12 app-control-label">Dinner</div>
+      <div class="ui-g-12" [innerHtml]="formatMultiline(intake.dinner)"></div>
+    </div>
+    <div class="ui-g-6 ui-g-nopad">
+      <div class="ui-g-12 app-control-label">Snacks</div>
+      <div class="ui-g-12" [innerHtml]="formatMultiline(intake.snacks)"></div>
+    </div>
+    <div class="ui-g-12 ui-g-nopad">
+      <div class="ui-g-12 app-control-label">Coach's Notes</div>
+      <div class="ui-g-12">
+        <textarea pInputTextarea [(ngModel)]="intake.coachNotes" (keyup)="updateCoachNotes($event)" rows="3" style="width:100%;"></textarea>
+      </div>
+    </div>
+    <div class="ui-g-12">
+      <p-button label="Save" (click)="onSaveClick();"></p-button>
+    </div>
+  </ng-container>
+</div>

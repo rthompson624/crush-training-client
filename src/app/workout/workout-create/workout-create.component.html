@@ -1,0 +1,122 @@
+<div class="ui-g" style="margin-top:3.5em;margin-bottom:2em;padding:0.5em;max-width:400px;">
+  <app-check-version></app-check-version>
+  <div class="ui-g-12 ui-g-nopad app-control-label" style="padding-bottom:0em;">Client</div>
+  <div class="ui-g-12 ui-g-nopad">{{client.nameFirst + ' ' + client.nameLast}}</div>
+  <ng-container *ngIf="workout">
+    <div class="ui-g-12 ui-g-nopad" style="padding-top:0.7em;">
+        <div class="ui-g" style="float: left">
+          <p-radioButton name="meetingType" value="inperson" [(ngModel)]="workout.meetingType" label="In Person" (onClick)="onSelectInPerson()"></p-radioButton>
+        </div>
+        <div class="ui-g" style="padding-left:1em;">
+          <p-radioButton name="meetingType" value="remote" [(ngModel)]="workout.meetingType" label="Remote" (onClick)="onSelectRemote()"></p-radioButton>
+        </div>
+    </div>
+    <div class="ui-g-12 ui-g-nopad" style="padding-top:0.5em;padding-bottom:1em;">
+      <div class="ui-g-12 ui-g-nopad app-control-label">Date</div>
+      <div class="ui-g-12 ui-g-nopad">
+        <p-calendar [(ngModel)]="workout.assignmentDate" [showTime]="workout.meetingType == 'inperson'" [hideOnDateTimeSelect]="true" [hourFormat]="12" [stepMinute]="15" (onFocus)="onDateFocus()"></p-calendar>
+      </div>
+    </div>
+    <p-dialog [header]="movementHistoryDialogTitle" [(visible)]="displayMovementHistoryDialog" modal="modal" (onHide)="onCloseMovementHistoryDialog()">
+      <div class="ui-g-12 ui-g-nopad" style="display: flex;">
+        <div class="ui-g-3" style="align-self:flex-end;padding-top:0em;">Date</div>
+        <div class="ui-g-3" style="align-self:flex-end;padding-top:0em;">Sets x Reps</div>
+        <div class="ui-g-3" style="align-self:flex-end;text-align:right;padding-top:0em;">Weight</div>
+        <div class="ui-g-3" style="align-self:flex-end;text-align:right;padding-top:0em;">Reps on last set</div>
+      </div>
+      <div class="ui-g-12 ui-g-nopad" *ngFor="let userMovement of userMovementHistory">
+        <div class="ui-g-3">{{ (userMovement.date.getMonth() + 1) + '/' + userMovement.date.getDate() }}</div>
+        <div class="ui-g-3">{{ userMovement.sets }} x {{ userMovement.reps }}</div>
+        <div class="ui-g-3" style="text-align:right;">{{ userMovement.weight }}</div>
+        <div class="ui-g-3" style="text-align:right;">{{ userMovement.repsLastSet }}</div>
+      </div>
+    </p-dialog>
+    <p-dialog [header]="videoDialogTitle" [(visible)]="displayVideoDialog" modal="modal" (onHide)="onCloseVideoDialog()">
+      <iframe [src]=url frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    </p-dialog>
+    <div class="ui-g app-well" style="padding:0.5em" *ngFor="let segment of workout.segments">
+      <div class="ui-g-12 ui-g-nopad">
+        <div class="ui-g-1 ui-g-nopad">
+          <a *ngIf="workout.segments.length > 1" (click)="removeSegment(segment)"><i class="fa fa-minus-circle fa-lg"></i></a>
+        </div>
+        <div class="ui-g-11 ui-g-nopad app-control-label">Segment {{ segment.order }}</div>
+      </div>
+      <div class="ui-g-12 ui-g-nopad app-control-label" style="padding-top:0.8em;">Type</div>
+      <div class="ui-g-12 ui-g-nopad">
+        <p-dropdown [options]="segmentTypes" [(ngModel)]="segment.type" placeholder="" (onChange)="onSegmentTypeChange(segment)"></p-dropdown>
+      </div>
+      <ng-container *ngIf="segment.type == 'singleset' || segment.type == 'superset'">
+        <ng-container *ngFor="let exercise of segment.exercises">
+          <div class="ui-g-12 ui-g-nopad" style="padding-top:0.5em;">
+            <div class="ui-g app-control-label" style="float:left;" *ngIf="segment.type == 'singleset'">Movement</div>
+            <div class="ui-g" style="float:left;padding-right:1em;" *ngIf="(segment.type == 'superset') && (segment.exercises.length > 1)">
+              <a (click)="removeExercise(segment, exercise)"><i class="fa fa-minus-circle fa-lg"></i></a>
+            </div>
+            <div class="ui-g app-control-label" style="float:left;" *ngIf="segment.type == 'superset'">Movement ({{ exercise.order }})</div>
+            <div class="ui-g" style="float:left;padding-left:2.5em;" *ngIf="exercise.movementID">
+              <a (click)="displayMovementHistory(exercise.movementID)"><i class="fa fa-history fa-lg"></i></a>
+            </div>
+            <div class="ui-g" style="padding-left:2.5em;" *ngIf="exercise.movementID">
+              <a *ngIf="exercise.movementID" (click)="playVideo(exercise.movementID)"><i class="fa fa-video-camera fa-lg"></i></a>
+            </div>
+          </div>
+          <div class="ui-g-12 ui-g-nopad">
+            <p-autoComplete [(ngModel)]="exercise.movementSelection" (onSelect)="onMovementSelected(exercise)" [suggestions]="movementSuggestions" (completeMethod)="searchMovements($event)" field="name" [size]="33" [dropdown]="true" placeholder="Start typing..."></p-autoComplete>
+          </div>
+          <div class="ui-g-12 ui-g-nopad" style="padding-top:0.5em;">
+            <div class="ui-g-3 ui-g-nopad">
+              <div class="ui-g-12 ui-g-nopad app-control-label">Sets</div>
+              <div class="ui-g-12 ui-g-nopad">
+                <input pInputText pKeyFilter="pint" [(ngModel)]="exercise.sets" size="4">
+              </div>
+            </div>
+            <div class="ui-g-3 ui-g-nopad">
+              <div class="ui-g-12 ui-g-nopad app-control-label">Reps</div>
+              <div class="ui-g-12 ui-g-nopad">
+                <input pInputText pKeyFilter="pint" [(ngModel)]="exercise.reps" size="4">
+              </div>
+            </div>
+          </div>
+        </ng-container>
+        <div class="ui-g-12 ui-g-nopad" style="padding-top:1em;" *ngIf="segment.type == 'superset'">
+          <div class="ui-g" style="float: left;">
+            <a (click)="addExercise(segment)"><i class="fa fa-plus-circle fa-lg"></i></a>
+          </div>
+          <div class="ui-g app-control-label" style="padding-left:1em;"><em>Add another movement</em></div>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="segment.type == 'circuit'">
+        <div class="ui-g-12 ui-g-nopad app-control-label" style="padding-top:0.5em;">Circuit Name</div>
+        <div class="ui-g-12 ui-g-nopad">
+          <input pInputText [(ngModel)]="segment.circuitName" style="width:100%;">
+        </div>
+        <div class="ui-g-12 ui-g-nopad app-control-label" style="padding-top:0.5em;">Circuit Description</div>
+        <div class="ui-g-12 ui-g-nopad">
+          <textarea pInputTextarea [(ngModel)]="segment.circuitDescription" rows="3" style="width:100%;"></textarea>
+        </div>
+      </ng-container>
+    </div>
+    <div class="ui-g-12 ui-g-nopad app-well" style="padding:0.5em">
+      <div class="ui-g-12 ui-g-nopad">
+        <div class="ui-g" style="float: left;">
+          <a (click)="addSegment()"><i class="fa fa-plus-circle fa-lg"></i></a>
+        </div>
+        <div class="ui-g app-control-label" style="padding-left: 1em;"><em>Add another segment</em></div>
+      </div>
+    </div>
+  </ng-container>
+  <p-dialog header="Workout" [(visible)]="displaySaveDialog" (onHide)="hideSaveDialog()" modal="modal">
+    <div class="ui-g-12 ui-g-nopad" style="padding-bottom:0.5em;">
+      {{ saveDialogMessage }}
+    </div>
+    <div *ngFor="let issue of saveDialogIssues" class="ui-g-12 ui-g-nopad">
+      {{ issue }}
+    </div>
+    <p-footer>
+      <p-button label="OK" (click)="hideSaveDialog()"></p-button>
+    </p-footer>
+  </p-dialog>
+  <div class="ui-g-12 ui-g-nopad">
+    <p-button label="Save Workout" (click)="saveWorkout()"></p-button>
+  </div>
+</div>

@@ -1,0 +1,79 @@
+<!-- Manage Movements Screen -->
+<div class="ui-g-12 ui-g-nopad" style="margin-top:4em;margin-bottom:2em">
+  <app-check-version></app-check-version>
+  <div class="ui-g" style="clear:both">
+    <div class="ui-g" style="padding-left:0.5em;padding-bottom:0.5em;float:left">
+      <h4 style="margin:0em">Movement Library</h4>
+    </div>
+    <div class="ui-g" style="padding-left:0.5em">
+      <a (click)="info2.visible = true;" style="color:#337AB7;"><i class="fa fa-info-circle"></i></a>
+    </div>
+    <p-dialog #info2 header="Info" [visible]="false" (onHide)="info2.visible = false;" modal="modal" [responsive]="true">
+      <div class="ui-g-12 ui-g-nopad">
+        You can add your own movements to the library complete with video. Custom movements appear in the listbox below as hyperlinks indicating they are editable.
+      </div>
+    </p-dialog>
+  </div>
+  <!-- Search Section -->
+  <div class="ui-g">
+    <div class="ui-g-12">
+      <p-chips [(ngModel)]="filterQuery" (onAdd)="filterMovements()" (onRemove)="filterMovements()" placeholder="Search keywords..." [allowDuplicate]="false" [addOnBlur]="true"></p-chips>
+    </div>
+  </div>
+  <!-- Delete Confirmation Dialog -->
+  <p-dialog header="Confirmation" [(visible)]="displayDeleteDialog" modal="modal" [responsive]="true">
+    <div *ngIf="movementToDelete" class="ui-g-12 ui-g-nopad">
+      Are you sure you wish to delete {{ movementToDelete.name }}?
+    </div>
+    <p-footer>
+      <button type="button" pButton icon="fa-check" (click)="onDeleteConfirmation()" label="Yes"></button>
+      <button type="button" pButton icon="fa-close" (click)="displayDeleteDialog = false" label="No"></button>
+    </p-footer>
+  </p-dialog>
+  <!-- List Section -->
+  <div class="ui-g">
+    <div class="ui-g-12">
+      <p-scrollPanel [style]="{width: '100%', height: '23em'}">
+        <div *ngFor="let movement of filteredMovements" class="ui-g-12 ui-g-nopad" style="padding-right:1.5em">
+          <ng-container *ngIf="movement.source == 'trainer'">
+            <div class="ui-g" style="float:left">
+              <a (click)="onEditMovement(movement)" style="color:#337AB7;">{{ movement.name }}</a>
+            </div>
+            <div class="ui-g" style="float:left;padding-left:0.5em;">
+              <a (click)="onEditMovement(movement)" style="color:#337AB7;"><i class="fa fa-pencil"></i></a>
+            </div>
+            <div class="ui-g" style="float:right;padding-right:0.5em;">
+              <a (click)="onClickDelete(movement)" style="color:red;"><i class="fa fa-trash-o"></i></a>
+            </div>
+          </ng-container>
+          <ng-container *ngIf="movement.source == 'standard'">
+            <div class="ui-g">
+                {{ movement.name }}
+            </div>
+          </ng-container>
+        </div>
+      </p-scrollPanel>
+    </div>
+  </div>
+  <!-- Create / Update -->
+  <div class="ui-g-12">
+    <hr style="margin:0em">
+  </div>
+  <p-dialog #info1 header="Info" [visible]="false" (onHide)="info1.visible = false;" modal="modal" [responsive]="true">
+    <div class="ui-g-12 ui-g-nopad" style="padding-bottom:1em">The ID (outlined in red below) can be found by clicking "Share" when viewing the video on YouTube's site.</div>
+    <img src="/assets/images/youtube_id.jpg" alt="YouTube ID" style="border-style:solid;border-width:thin;" />
+  </p-dialog>  
+  <div class="ui-g-12 app-control-label">Movement</div>
+  <div class="ui-g-12">
+    <input type="text" pInputText (keyup)="validateForm()" (paste)="validateForm()" [(ngModel)]="activeMovement.name" style="width:100%"/>
+  </div>
+  <div class="ui-g-12 app-control-label">
+    YouTube ID &nbsp;<a (click)="info1.visible = true;" style="color:#337AB7;"><i class="fa fa-info-circle"></i></a>
+  </div>
+  <div class="ui-g-12">
+    <input type="text" pInputText (keyup)="validateForm()" (paste)="validateForm()" [(ngModel)]="activeMovement.youtubeID"/>
+  </div>
+  <div class="ui-g-12 app-control-label">
+    <p-button label="Save" [disabled]="saveDisabled" (onClick)="saveMovement()"></p-button>
+  </div>
+</div>

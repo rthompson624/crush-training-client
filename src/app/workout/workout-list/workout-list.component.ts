@@ -5,7 +5,7 @@ import { Segment } from '../segment.model';
 import { Exercise } from '../exercise.model';
 import { WorkoutService } from '../workout.service';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { UserService } from '../../user/user.service';
 import { PanelModule } from 'primeng/panel';
 

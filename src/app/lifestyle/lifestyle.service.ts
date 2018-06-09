@@ -1,8 +1,8 @@
 import { Injectable, EventEmitter, Output } from '@angular/core';
 import { Survey } from './survey.model';
 import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from 'angularfire2/firestore';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/map';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Injectable()
 export class LifestyleService {
@@ -43,7 +43,7 @@ export class LifestyleService {
     let surveyCol: AngularFirestoreCollection<Survey>;
     let surveys: Observable<Survey[]>;
     surveyCol = this.afs.collection('survey', ref => ref.where('trainerID', '==', trainerID).where('date', '==', date));
-    surveys = surveyCol.snapshotChanges().map(
+    surveys = surveyCol.snapshotChanges().pipe(map(
       changeCol => {
         return changeCol.map(
           change => {
@@ -54,7 +54,7 @@ export class LifestyleService {
           }
         );
       }
-    );
+    ));
     return surveys;
   }
 
@@ -63,7 +63,7 @@ export class LifestyleService {
     let surveyCol: AngularFirestoreCollection<Survey>;
     let surveys: Observable<Survey[]>;
     surveyCol = this.afs.collection('survey', ref => ref.where('userID', '==', userID).where('date', '>=', startRange).where('date', '<', endRange).orderBy('date', 'asc'));
-    surveys = surveyCol.snapshotChanges().map(
+    surveys = surveyCol.snapshotChanges().pipe(map(
       changeCol => {
         return changeCol.map(
           change => {
@@ -74,7 +74,7 @@ export class LifestyleService {
           }
         );
       }
-    );
+    ));
     return surveys;
   }
 

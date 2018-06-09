@@ -18,7 +18,7 @@ import { SelectItem } from 'primeng/api';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { KeyFilterModule } from 'primeng/keyfilter';
 import { SafeResourceUrl, DomSanitizer } from '@angular/platform-browser';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { UserService } from '../../user/user.service';
 import { NavigationStateService } from '../../navigation/navigation-state.service';
 

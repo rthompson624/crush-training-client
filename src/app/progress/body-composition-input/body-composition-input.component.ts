@@ -4,8 +4,7 @@ import { User } from '../../user/user.model';
 import { BodyCompMeasurement } from '../body-comp-measurement.model';
 import { ProgressService } from '../progress.service';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs/Subscription';
-import { Observable } from 'rxjs/Observable';
+import { Subscription ,  Observable } from 'rxjs';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { KeyFilterModule } from 'primeng/keyfilter';
@@ -57,8 +56,8 @@ export class BodyCompositionInputComponent implements OnInit, OnDestroy {
     let fileName = this.createUUID() + '.jpg';
     let uploadTask: AngularFireUploadTask = this.afStorage.ref('user/progress/' + this.subjectUser.id + '/' + fileName).put(event.target.files[0]);
     this.uploadProgress = uploadTask.percentageChanges();
-    this.measurement.picUrl = uploadTask.downloadURL();
-    uploadTask.then().then(a => {
+    uploadTask.then(a => {
+      this.measurement.picUrl = a.downloadURL;
       this.displayProgress = false;
       this.measurement.progressPic = fileName;
     });

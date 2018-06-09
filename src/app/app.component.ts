@@ -1,7 +1,4 @@
 import { Component, OnInit, OnDestroy} from '@angular/core';
-import * as firebase from 'firebase';
-import { AngularFirestore } from 'angularfire2/firestore';
-import { environment } from './../environments/environment';
 import { AuthService } from '../app/auth/auth.service';
 
 @Component({

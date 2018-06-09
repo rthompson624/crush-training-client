@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from 'angularfire2/firestore';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/map';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Schedule } from './schedule.model';
 
 @Injectable()
@@ -16,7 +16,7 @@ export class ScheduleService {
     let scheduleCol: AngularFirestoreCollection<Schedule>;
     let schedule: Observable<Schedule[]>;
     scheduleCol = this.afs.collection('schedule', ref => ref.where('userID', '==', userID).orderBy('dayOfWeek', 'asc'));
-    schedule = scheduleCol.snapshotChanges().map(
+    schedule = scheduleCol.snapshotChanges().pipe(map(
       changeCol => {
         if (changeCol.length == 0) {
           // First time. Need to create set of records
@@ -47,7 +47,7 @@ export class ScheduleService {
           );
         }
       }
-    );
+    ));
     return schedule;
   }
 

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from 'angularfire2/firestore';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/map';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Tip } from './tip.model';
 
 @Injectable()
@@ -16,7 +16,7 @@ export class TipService {
     let tipCol: AngularFirestoreCollection<Tip>;
     let tips: Observable<Tip[]>;
     tipCol = this.afs.collection('tip', ref => ref.where('trainerID', '==', trainerID).orderBy('startDate', 'desc'));
-    tips = tipCol.snapshotChanges().map(
+    tips = tipCol.snapshotChanges().pipe(map(
       changeCol => {
         return changeCol.map(
           change => {
@@ -27,7 +27,7 @@ export class TipService {
           }
         );
       }
-    );
+    ));
     return tips;
   }
 
@@ -38,7 +38,7 @@ export class TipService {
     let today = new Date();
     today = new Date(today.toDateString());
     tipCol = this.afs.collection('tip', ref => ref.where('trainerID', '==', trainerID).where('startDate', '==', today));
-    tips = tipCol.snapshotChanges().map(
+    tips = tipCol.snapshotChanges().pipe(map(
       changeCol => {
         return changeCol.map(
           change => {
@@ -49,7 +49,7 @@ export class TipService {
           }
         );
       }
-    );
+    ));
     return tips;
   }
 

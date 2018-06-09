@@ -11,11 +11,10 @@ import { MessageService } from '../message/message.service';
 import { BodyCompMeasurement } from '../progress/body-comp-measurement.model';
 import { ProgressService } from '../progress/progress.service';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription ,  Observable } from 'rxjs';
 import { UserService } from '../user/user.service';
 import { TipService } from '../tip/tip.service';
 import { Tip } from '../tip/tip.model';
-import { Observable } from 'rxjs/Observable';
 
 @Component({
   selector: 'app-dashboard',

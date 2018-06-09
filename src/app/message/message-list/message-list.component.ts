@@ -1,7 +1,7 @@
 import { Component, OnInit, AfterViewChecked } from '@angular/core';
 import { Router } from '@angular/router';
 import { MessageService } from '../message.service';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { Message } from '../message.model';
 import { User } from '../../user/user.model';
 import { UserService } from '../../user/user.service';

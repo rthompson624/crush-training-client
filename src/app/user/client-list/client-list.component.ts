@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { NavigationStateService } from '../../navigation/navigation-state.service';
 import { User } from '../../user/user.model';
 import { UserService } from '../../user/user.service';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { DataListModule } from 'primeng/datalist';

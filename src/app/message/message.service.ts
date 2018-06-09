@@ -1,7 +1,7 @@
 import { Injectable, EventEmitter, Output } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from 'angularfire2/firestore';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/map';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Message } from './message.model';
 
 @Injectable()
@@ -17,7 +17,7 @@ export class MessageService {
     let messageCol: AngularFirestoreCollection<Message>;
     let messages: Observable<Message[]>;
     messageCol = this.afs.collection('message', ref => ref.where('clientID', '==', clientID).orderBy('date', 'asc'));
-    messages = messageCol.snapshotChanges().map(
+    messages = messageCol.snapshotChanges().pipe(map(
       changeCol => {
         return changeCol.map(
           change => {
@@ -29,7 +29,7 @@ export class MessageService {
           }
         );
       }
-    );
+    ));
     return messages;
   }
 
@@ -60,7 +60,7 @@ export class MessageService {
     let messageCol: AngularFirestoreCollection<Message>;
     let messages: Observable<Message[]>;
     messageCol = this.afs.collection('message', ref => ref.where('toUserID', '==', trainerID).where('viewed', '==', false).orderBy('clientID', 'asc'));
-    messages = messageCol.snapshotChanges().map(
+    messages = messageCol.snapshotChanges().pipe(map(
       changeCol => {
         return changeCol.map(
           change => {
@@ -71,7 +71,7 @@ export class MessageService {
           }
         );
       }
-    );
+    ));
     return messages;
   }
 

@@ -9,7 +9,7 @@ import { WorkoutService } from '../workout.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { DialogModule } from 'primeng/dialog';
 import { SafeResourceUrl, DomSanitizer } from '@angular/platform-browser';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { UserService } from '../../user/user.service';
 import { NavigationStateService } from '../../navigation/navigation-state.service';
 import { InputTextModule } from 'primeng/inputtext';

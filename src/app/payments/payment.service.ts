@@ -4,8 +4,9 @@ import { DocumentReference } from '@firebase/firestore-types';
 import { Payment } from './payment.model';
 import { StripeSubscription } from './stripe-subscription.model';
 import { UserService } from '../user/user.service';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/map';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+
 
 @Injectable()
 export class PaymentService {
@@ -36,14 +37,14 @@ export class PaymentService {
     let paymentDoc: AngularFirestoreDocument<Payment>;
     let payment: Observable<Payment>;
     paymentDoc = this.afs.doc('payment/' + id);
-    payment = paymentDoc.snapshotChanges().map(
+    payment = paymentDoc.snapshotChanges().pipe(map(
       changeDoc => {
         let data = changeDoc.payload.data() as Payment;
         data.id = changeDoc.payload.id;
         this.convertFirestoreTimestampsToDates(data);
         return data;
       }
-    );
+    ));
     return payment;
   }
 
@@ -71,7 +72,7 @@ export class PaymentService {
     let subscriptionCol: AngularFirestoreCollection<StripeSubscription>;
     let subscriptionsObs: Observable<StripeSubscription[]>;
     subscriptionCol = this.afs.collection('subscription', ref => ref.where('userID', '==', trainerID).where('cancelled', '==', false));
-    subscriptionsObs = subscriptionCol.snapshotChanges().map(
+    subscriptionsObs = subscriptionCol.snapshotChanges().pipe(map(
       changeCol => {
         return changeCol.map(
           change => {
@@ -82,7 +83,7 @@ export class PaymentService {
           }
         );
       }
-    );
+    ));
     return subscriptionsObs;
   }
 
@@ -90,7 +91,7 @@ export class PaymentService {
     let subscriptionCol: AngularFirestoreCollection<StripeSubscription>;
     let subscriptionsObs: Observable<StripeSubscription[]>;
     subscriptionCol = this.afs.collection('subscription', ref => ref.where('userID', '==', userID).where('cancelled', '==', false));
-    subscriptionsObs = subscriptionCol.snapshotChanges().map(
+    subscriptionsObs = subscriptionCol.snapshotChanges().pipe(map(
       changeCol => {
         return changeCol.map(
           change => {
@@ -101,7 +102,7 @@ export class PaymentService {
           }
         );
       }
-    );
+    ));
     let subscriptionsSub = subscriptionsObs.subscribe(subscriptions => {
       if (subscriptions.length > 0) {
         const subscription = subscriptions[0];
@@ -124,7 +125,7 @@ export class PaymentService {
     let subscriptionCol: AngularFirestoreCollection<StripeSubscription>;
     let subscriptionsObs: Observable<StripeSubscription[]>;
     subscriptionCol = this.afs.collection('subscription', ref => ref.where('userID', '==', userID).where('cancelled', '==', false));
-    subscriptionsObs = subscriptionCol.snapshotChanges().map(
+    subscriptionsObs = subscriptionCol.snapshotChanges().pipe(map(
       changeCol => {
         return changeCol.map(
           change => {
@@ -135,7 +136,7 @@ export class PaymentService {
           }
         );
       }
-    );
+    ));
     let subscriptionsSub = subscriptionsObs.subscribe(subscriptions => {
       if (subscriptions.length > 0) {
         const subscription = subscriptions[0];

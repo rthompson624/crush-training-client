@@ -4,7 +4,7 @@ import { User } from '../user/user.model';
 import { UserService } from '../user/user.service';
 import { PaymentService } from '../payments/payment.service';
 import { StripeSubscription} from '../payments/stripe-subscription.model';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-configuration',

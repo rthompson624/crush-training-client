@@ -1,8 +1,7 @@
 import { Component, OnInit, HostListener, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { DocumentReference } from '@firebase/firestore-types';
-import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs/Subscription';
+import { Observable ,  Subscription } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { PaymentService } from '../payment.service';
 import { StripeSubscription } from '../stripe-subscription.model';

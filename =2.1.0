@@ -1,0 +1,4 @@
+/usr/local/bin/tsc -> /usr/local/lib/node_modules/typescript/bin/tsc
+/usr/local/bin/tsserver -> /usr/local/lib/node_modules/typescript/bin/tsserver
++ typescript@2.9.1
+added 1 package from 1 contributor in 0.902s

@@ -1,4 +1,7 @@
-import * as firebase from 'firebase';
+// import * as firebase from 'firebase';
+import * as firebase from 'firebase/app';
+import 'firebase/auth';
+import 'firebase/firestore';
 import { environment } from '../../environments/environment';
 import { EventEmitter, Output } from '@angular/core';
 
@@ -23,7 +26,7 @@ export class AuthService {
   }
 
   public checkUserAuthenticationStatus(): void {
-    firebase.auth().onAuthStateChanged((user: firebase.User) => {
+    firebase.auth().onAuthStateChanged(user => {
       if (user) {
         this.userAuthenticationStatus.emit(user.uid);
       }

@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { User } from '../../user/user.model';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { UserService } from '../../user/user.service';
 import { Schedule } from '../../user/schedule.model';
 import { ScheduleService } from '../../user/schedule.service';
@@ -141,8 +141,8 @@ export class ProfileViewComponent implements OnInit, OnDestroy {
     this.displayProgress = true;
     let uploadTask: AngularFireUploadTask = this.afStorage.ref('user/profile/' + this.subjectUser.id + '.jpg').put(event.target.files[0]);
     this.uploadProgress = uploadTask.percentageChanges();
-    this.profilePicUrl = uploadTask.downloadURL();
-    uploadTask.then().then(a => {
+    uploadTask.then(a => {
+      this.profilePicUrl = a.downloadURL;
       this.displayProgress = false;
       this.subjectUser.hasProfilePic = true;
       this.userService.updateUser(this.subjectUser);

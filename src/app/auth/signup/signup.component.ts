@@ -1,10 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthService } from '../auth.service';
 import { Router, ActivatedRoute } from '@angular/router';
-import 'rxjs/add/operator/filter';
+
 import { DocumentReference } from '@firebase/firestore-types';
 import { User } from '../../user/user.model';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { UserService } from '../../user/user.service';
 import { NavigationStateService } from '../../navigation/navigation-state.service';
 import { InputTextModule } from 'primeng/inputtext';
@@ -42,8 +42,8 @@ export class SignupComponent implements OnInit, OnDestroy {
       'email': new FormControl('', Validators.compose([Validators.required, Validators.email])),
       'password': new FormControl('', Validators.compose([Validators.required, Validators.minLength(6)]))
     });
-    this.route.queryParams.filter(params => params.trainer).subscribe(params => {
-      this.trainerID = params.trainer;
+    this.route.queryParams.subscribe(params => {
+      this.trainerID = params['trainer'];
       this.validUrl = this.isTrainerIDValid(this.trainerID);
     });
   }

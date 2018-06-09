@@ -1,11 +1,10 @@
 import { Injectable, EventEmitter, Output } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from 'angularfire2/firestore';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/map';
+import { Observable, Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { User } from './user.model';
 import { AuthService } from '../auth/auth.service';
 import { DocumentReference } from '@firebase/firestore-types';
-import { Subscription } from 'rxjs/Subscription';
 import { Organization } from './organization.model';
 
 @Injectable()
@@ -56,7 +55,7 @@ export class UserService {
     let userCol: AngularFirestoreCollection<User>;
     let users: Observable<User[]>;
     userCol = this.afs.collection('user', ref => ref.where('authenticationUID', '==', authenticationUID));
-    users = userCol.snapshotChanges().map(
+    users = userCol.snapshotChanges().pipe(map(
       changeCol => {
         return changeCol.map(
           change => {
@@ -67,7 +66,7 @@ export class UserService {
           }
         );
       }
-    );
+    ));
     // Listen for response
     let sub = users.subscribe(
       (user: User[]) => {
@@ -132,7 +131,7 @@ export class UserService {
     let clientCol: AngularFirestoreCollection<User>;
     let clients: Observable<User[]>;
     clientCol = this.afs.collection('user', ref => ref.where('trainerID', '==', trainerID).orderBy('nameFirst', 'asc'));
-    clients = clientCol.snapshotChanges().map(
+    clients = clientCol.snapshotChanges().pipe(map(
       changeCol => {
         return changeCol.map(
           change => {
@@ -143,7 +142,7 @@ export class UserService {
           }
         );
       }
-    );
+    ));
     return clients;
   }
 
@@ -151,7 +150,7 @@ export class UserService {
     let userCol: AngularFirestoreCollection<User>;
     let users: Observable<User[]>;
     userCol = this.afs.collection('user', ref => ref.where('id', '==', userID));
-    users = userCol.snapshotChanges().map(
+    users = userCol.snapshotChanges().pipe(map(
       changeCol => {
         return changeCol.map(
           change => {
@@ -162,7 +161,7 @@ export class UserService {
           }
         );
       }
-    );
+    ));
     return users;
   }
 
@@ -248,7 +247,7 @@ export class UserService {
     let intakeCol: AngularFirestoreCollection<any>;
     let intakes: Observable<any[]>;
     intakeCol = this.afs.collection('intake-questionnaire', ref => ref.where('userID', '==', userID));
-    intakes = intakeCol.snapshotChanges().map(
+    intakes = intakeCol.snapshotChanges().pipe(map(
       changeCol => {
         return changeCol.map(
           change => {
@@ -259,7 +258,7 @@ export class UserService {
           }
         );
       }
-    );
+    ));
     return intakes;
   }
 

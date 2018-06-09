@@ -5,8 +5,9 @@ import { ButtonModule } from 'primeng/button';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from 'angularfire2/firestore';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/map';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+
 
 @Component({
   selector: 'app-intake-questionnaire-view',
@@ -35,19 +36,19 @@ export class IntakeQuestionnaireViewComponent implements OnInit {
         this.subjectUser = this.user;
       }
       let intakeCol = this.afs.collection('intake-questionnaire', ref => ref.where('userID', '==', this.subjectUser.id));
-      this.intakes = intakeCol.snapshotChanges().map(
+      this.intakes = intakeCol.snapshotChanges().pipe(map(
         changeCol => {
           return changeCol.map(
             change => {
               let data = change.payload.doc.data();
-              this.coachNotes = data.coachNotes;
+              this.coachNotes = data['coachNotes'];
               this.intakeID = change.payload.doc.id;
               this.convertFirestoreTimestampsToDates(data);
               return data;
             }
           );
         }
-      );
+      ));
     }
   }
 

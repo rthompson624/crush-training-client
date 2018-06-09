@@ -2,9 +2,9 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthService } from '../auth.service';
 import { NavigationStateService } from '../../navigation/navigation-state.service';
 import { Router, ActivatedRoute } from '@angular/router';
-import 'rxjs/add/operator/filter';
+
 import { User } from '../../user/user.model';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { UserService } from '../../user/user.service';
 import { LifestyleService } from '../../lifestyle/lifestyle.service';
 import { WorkoutService } from '../../workout/workout.service';
@@ -50,8 +50,8 @@ export class LoginComponent implements OnInit, OnDestroy {
       'email': new FormControl('', Validators.required),
       'password': new FormControl('', Validators.required)
     });
-    this.route.queryParams.filter(params => params.logout).subscribe(params => {
-      if (params.logout == 'true') {
+    this.route.queryParams.subscribe(params => {
+      if (params['logout'] == 'true') {
         this.onLogout();
       }
     });

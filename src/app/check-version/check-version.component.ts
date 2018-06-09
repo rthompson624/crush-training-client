@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { AngularFirestore, AngularFirestoreDocument } from 'angularfire2/firestore';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-check-version',

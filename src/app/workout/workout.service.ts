@@ -1,7 +1,7 @@
 import { Injectable, EventEmitter, Output } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from 'angularfire2/firestore';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/map';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Workout } from './workout.model';
 import { Segment } from './segment.model';
 import { Exercise } from './exercise.model';
@@ -61,7 +61,7 @@ export class WorkoutService {
           let segmentCol: AngularFirestoreCollection<Segment>;
           let segments: Observable<Segment[]>;
           segmentCol = this.afs.collection('workout/' + workoutID + '/segment', ref => ref.orderBy('order', 'asc'));
-          segments = segmentCol.snapshotChanges().map(
+          segments = segmentCol.snapshotChanges().pipe(map(
             changeCol => {
               return changeCol.map(
                 change => {
@@ -71,7 +71,7 @@ export class WorkoutService {
                 }
               );
             }
-          );
+          ));
           // Listen for response
           let sub = segments.subscribe(
             (segment: Segment[]) => {
@@ -84,7 +84,7 @@ export class WorkoutService {
                   let exercises: Observable<Exercise[]>;
                   for (let i = 0; i < workoutToDelete.segments.length; i++) {
                     exerciseCol = this.afs.collection('workout/' + workoutID + '/segment/' + workoutToDelete.segments[i].id + '/exercise', ref => ref.orderBy('order', 'asc'));
-                    exercises = exerciseCol.snapshotChanges().map(
+                    exercises = exerciseCol.snapshotChanges().pipe(map(
                       changeCol => {
                         return changeCol.map(
                           change => {
@@ -94,7 +94,7 @@ export class WorkoutService {
                           }
                         );
                       }
-                    );
+                    ));
                     // Listen for response
                     let sub = exercises.subscribe(
                       (exercise: Exercise[]) => {
@@ -204,7 +204,7 @@ export class WorkoutService {
     let workouts: Observable<Workout[]>;
     let nextDay = new Date(date.getTime() + 86400000);
     workoutCol = this.afs.collection('workout', ref => ref.where('assignmentDate', '>=', date).where('assignmentDate', '<', nextDay).where('userID', '==', userID));
-    workouts = workoutCol.snapshotChanges().map(
+    workouts = workoutCol.snapshotChanges().pipe(map(
       changeCol => {
         return changeCol.map(
           change => {
@@ -215,7 +215,7 @@ export class WorkoutService {
           }
         );
       }
-    );
+    ));
     // Listen for response
     let sub = workouts.subscribe(
       (workout: Workout[]) => {
@@ -253,7 +253,7 @@ export class WorkoutService {
     let segmentCol: AngularFirestoreCollection<Segment>;
     let segments: Observable<Segment[]>;
     segmentCol = this.afs.collection('workout/' + loadingWorkout.id + '/segment', ref => ref.orderBy('order', 'asc'));
-    segments = segmentCol.snapshotChanges().map(
+    segments = segmentCol.snapshotChanges().pipe(map(
       changeCol => {
         return changeCol.map(
           change => {
@@ -263,7 +263,7 @@ export class WorkoutService {
           }
         );
       }
-    );
+    ));
     // Listen for response
     let sub = segments.subscribe(
       (segment: Segment[]) => {
@@ -284,7 +284,7 @@ export class WorkoutService {
     if (lastIndex > -1) {
       for (let i = 0; i < loadingWorkout.segments.length; i++) {
         exerciseCol = this.afs.collection('workout/' + loadingWorkout.id + '/segment/' + loadingWorkout.segments[i].id + '/exercise', ref => ref.orderBy('order', 'asc'));
-        exercises = exerciseCol.snapshotChanges().map(
+        exercises = exerciseCol.snapshotChanges().pipe(map(
           changeCol => {
             return changeCol.map(
               change => {
@@ -294,7 +294,7 @@ export class WorkoutService {
               }
             );
           }
-        );
+        ));
         // Listen for response
         let sub = exercises.subscribe(
           (exercise: Exercise[]) => {
@@ -316,7 +316,7 @@ export class WorkoutService {
     let movementCol: AngularFirestoreCollection<Movement>;
     let movements: Observable<Movement[]>;
     movementCol = this.afs.collection('movement', ref => ref.orderBy('name', 'asc'));
-    movements = movementCol.snapshotChanges().map(
+    movements = movementCol.snapshotChanges().pipe(map(
       changeCol => {
         return changeCol.map(
           change => {
@@ -327,7 +327,7 @@ export class WorkoutService {
           }
         );
       }
-    );
+    ));
     return movements;
   }
 
@@ -335,7 +335,7 @@ export class WorkoutService {
     let movementCol: AngularFirestoreCollection<Movement>;
     let movements: Observable<Movement[]>;
     movementCol = this.afs.collection('movementTrainer/' + trainerID + '/movement', ref => ref.orderBy('name', 'asc'));
-    movements = movementCol.snapshotChanges().map(
+    movements = movementCol.snapshotChanges().pipe(map(
       changeCol => {
         return changeCol.map(
           change => {
@@ -346,7 +346,7 @@ export class WorkoutService {
           }
         );
       }
-    );
+    ));
     return movements;
   }
 
@@ -370,7 +370,7 @@ export class WorkoutService {
     let movementCol: AngularFirestoreCollection<UserMovementHistory>;
     let movements: Observable<UserMovementHistory[]>;
     movementCol = this.afs.collection('userMovementHistory', ref => ref.where('userID', '==', userID).where('movementID', '==', movementID).orderBy('date', 'desc'));
-    movements = movementCol.snapshotChanges().map(
+    movements = movementCol.snapshotChanges().pipe(map(
       changeCol => {
         return changeCol.map(
           change => {
@@ -381,7 +381,7 @@ export class WorkoutService {
           }
         );
       }
-    );
+    ));
     return movements;
   }
 
@@ -389,7 +389,7 @@ export class WorkoutService {
     let movementCol: AngularFirestoreCollection<UserMovementHistory>;
     let movements: Observable<UserMovementHistory[]>;
     movementCol = this.afs.collection('userMovementHistory', ref => ref.where('userID', '==', userID).where('movementID', '==', movementID).where('date', '>=', startRange).where('date', '<=', endRange).orderBy('date', 'desc'));
-    movements = movementCol.snapshotChanges().map(
+    movements = movementCol.snapshotChanges().pipe(map(
       changeCol => {
         return changeCol.map(
           change => {
@@ -400,7 +400,7 @@ export class WorkoutService {
           }
         );
       }
-    );
+    ));
     return movements;
   }
 
@@ -433,7 +433,7 @@ export class WorkoutService {
     let movementCol: AngularFirestoreCollection<UserMovementHistory>;
     let movementObs: Observable<UserMovementHistory[]>;
     movementCol = this.afs.collection('userMovementHistory', ref => ref.where('userID', '==', workout.userID).where('date', '==', workout.submittedDate));
-    movementObs = movementCol.snapshotChanges().map(
+    movementObs = movementCol.snapshotChanges().pipe(map(
       changeCol => {
         return changeCol.map(
           change => {
@@ -443,7 +443,7 @@ export class WorkoutService {
           }
         );
       }
-    );
+    ));
     // Listen for response
     let sub = movementObs.subscribe(
       (movements: UserMovementHistory[]) => {
@@ -459,7 +459,7 @@ export class WorkoutService {
     let workoutCol: AngularFirestoreCollection<Workout>;
     let workouts: Observable<Workout[]>;
     workoutCol = this.afs.collection('workout', ref => ref.where('trainerID', '==', trainerID).where('assignmentDate', '>=', startRange).where('assignmentDate', '<', endRange).orderBy('assignmentDate', 'asc').orderBy('userName', 'asc'));
-    workouts = workoutCol.snapshotChanges().map(
+    workouts = workoutCol.snapshotChanges().pipe(map(
       changeCol => {
         return changeCol.map(
           change => {
@@ -470,7 +470,7 @@ export class WorkoutService {
           }
         );
       }
-    );
+    ));
     return workouts;
   }
 
@@ -478,7 +478,7 @@ export class WorkoutService {
     let workoutCol: AngularFirestoreCollection<Workout>;
     let workouts: Observable<Workout[]>;
     workoutCol = this.afs.collection('workout', ref => ref.where('userID', '==', userID).where('assignmentDate', '>=', startRange).where('assignmentDate', '<', endRange).orderBy('assignmentDate', 'asc'));
-    workouts = workoutCol.snapshotChanges().map(
+    workouts = workoutCol.snapshotChanges().pipe(map(
       changeCol => {
         return changeCol.map(
           change => {
@@ -489,7 +489,7 @@ export class WorkoutService {
           }
         );
       }
-    );
+    ));
     return workouts;
   }
 
